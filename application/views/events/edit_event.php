@@ -10,16 +10,17 @@
             var base_url = "<?php echo base_url(); ?>";
             var name = $("input[name='name']").val();
             var date = $("input[name='date']").val();
+            var event_id = <?php echo $event->idEvents; ?>;
             var description = $("textarea[name='description']").val();
+            console.log(judges);
             $.ajax({
-                url: base_url + "index.php/events/insert_event",
+                url: base_url + "index.php/events/update_event",
                 async: false,
                 type: "POST",
-                data: {'name':name,'date':date,'description':description,'judges': judges},
+                data: {'name':name,'date':date,'description':description,'judges': judges,'event_id':event_id},
                 success: function(resp){
                     console.log(resp);
-                    if(!resp.stat){
-                        console.log('simon');
+                    if(resp.stat){
                         $('#success').show('slow');
                     }
                 }
@@ -35,15 +36,15 @@
         <legend>New Event</legend>
         <label for="name">Name</label>
         <?php echo form_error('name', '<div class="alert alert-error">', '</div>'); ?>
-        <input type="text" placeholder="Name" name="name" value="<?php echo set_value('name');?>" />
+        <input type="text" placeholder="Name" name="name" value="<?php echo set_value('name',$event->name);?>" />
         
         <label for="date">Date</label>
         <?php echo form_error('date', '<div class="alert alert-error">', '</div>'); ?>
-        <input type="date" name="date" value="<?php echo set_value('date');?>" />
+        <input type="date" name="date" value="<?php echo set_value('date', $event->date);?>" />
         
         <label for="description">Description</label>
         <?php echo form_error('description', '<div class="alert alert-error">', '</div>'); ?>
-        <textarea name="description"><?php echo set_value('description');?></textarea>
+        <textarea name="description"><?php echo set_value('description',$event->description);?></textarea>
     </fieldset>
     <!--<input type="submit" value="Submit" class="btn" id="submit"/>-->
     <a class="btn" id= "submit">Submit</a>
@@ -60,6 +61,7 @@
             <li class="highlight">
                 Select Judges
             </li>
+            <?php echo $event_judges; ?>
         </ul>
     </section>
 </div>

@@ -24,6 +24,13 @@
             <!--Sorteable CSS and JS-->
             <link type="text/css" href="<?php echo base_url(); ?>bootstrap/css/sorteable.css" rel="stylesheet" />
             <script src="<?php echo base_url(); ?>bootstrap/js/jquery.sortable.min.js"></script>
+            <script>
+                $(function() {
+                    $('.connected').sortable({
+                        connectWith: '.connected'
+                    });
+                });
+            </script>
         <?php endif; ?>
         
     </head>

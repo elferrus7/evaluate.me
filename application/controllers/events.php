@@ -41,7 +41,7 @@ class Events extends CI_Controller {
         $this->table->set_heading('Event Name','Event Description', 'Date','');
         $this->table->set_caption('Events ' . anchor('events/create_event','<i class="icon-plus"></i>', 'class="btn" title="New Event"'));
         foreach($events as $event){
-            $this->table->add_row($event->name, $event->description, $event->date, '<a href="#"><i class="icon-zoom-in"></i></a><a href="#"><i class="icon-pencil"></i></a><a href="#"><i class="icon-remove"></i></a>');
+            $this->table->add_row($event->name, $event->description, $event->date, '<a href="#"><i class="icon-zoom-in"></i></a>'.anchor('events/edit_event/'.$event->idEvents,'<i class="icon-pencil"></i>').'<a href="#"><i class="icon-remove"></i></a>');
         }
         $data['table'] = $this->table->generate();
         $data['content'] = 'events/display_events';
@@ -52,30 +52,60 @@ class Events extends CI_Controller {
     public function create_event()
     {
         $this->load->helper('form');
+        $this->load->model('user_model');
         $data['content'] = 'events/create_event';
         $data['sorteable'] = TRUE;
-        $data['title'] = 'Evaluate.me';
-        $this->event_model->insert_event();
+        $data['title'] = 'Create Event';
+        $judges = $this->user_model->get_users();
+        $data['judges'] = "";
+        foreach ($judges as $judge){
+            $data['judges'] .= "<li data-id=\"$judge->idUsers\">$judge->first_name $judge->last_name </li>";
+        }
         $this->load->view('index.php',$data);
     }
     
     public function edit_event()
     {
-        
+        $this->load->helper('form');
+        $this->load->model('user_model');
+        $event_id = $this->uri->segment(3);
+        if($event_id === FALSE)redirect('events/display_events');
+        $data['content'] = 'events/edit_event';
+        $data['sorteable'] = TRUE;
+        $data['title'] = 'Edit Event';
+        $judges = $this->event_model->get_judges($event_id);
+        $data['judges'] = "";
+        foreach ($judges as $judge){
+            $data['judges'] .= "<li data-id=\"$judge->idUsers\">$judge->first_name $judge->last_name </li>";
+        }
+        $event_judges = $this->event_model->get_judges_event($event_id);
+        $data['event_judges'] = "";
+        foreach ($event_judges as $event_judge){
+            $data['event_judges'] .= "<li data-id=\"$event_judge->idUsers\">$event_judge->first_name $event_judge->last_name </li>";
+        }
+        $data['event'] = $this->event_model->get_event($event_id);
+        $this->load->view('index.php',$data);
     }
     public function delete_event()
     {
         
     }
-    public function test_ajax()
+    public function insert_event()
     {
-        $name = $this->input->post('name');
-        $judges = $this->input->post('judges');
-        $resp = "";
-        foreach($judges as $judge){
-            $resp .= " " . $judge;
+        if($this->event_model->insert_event()){
+            echo json_encode(array('stat'=>TRUE));
+        } else {
+            echo json_encode(array('stat'=>FALSE));
+        } 
+    }
+    
+    public function update_event()
+    {
+        if($this->event_model->update_event()){
+            echo json_encode(array('stat'=>TRUE));
+        } else {
+            echo json_encode(array('stat'=>FALSE));
         }
-        echo "Name $name , $resp";
     }
 }
 

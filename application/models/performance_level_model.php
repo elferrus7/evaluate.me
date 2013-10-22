@@ -11,19 +11,23 @@ class Performance_level_model extends CI_Model
     
     public function get_performance_levels()
     {
-        return $this->db->get($this->table)->result();
+        $pls = $this->db->get($this->table)->result();
+        foreach($pls  as $pl){
+            $data[$pl->idPerformance_levels] = $pl->description . ' - %' . $pl->percentage;
+        }
+        return $data;
     }
     
     public function get_performance_level($performance_level_id)
     {
-        return $this->db->get_where($this->table,array('Performance_levels_id'=>$performance_level_id))->result();
+        return $this->db->get_where($this->table,array('idPerformance_levels'=>$performance_level_id))->row();
     }
     
     public function insert_performance_level()
     {
         $data = array(
-            'percentage' => $this->post('percentage'),
-            'description' => $this->post('description')
+            'percentage' => $this->input->post('percentage'),
+            'description' => $this->input->post('description')
         );
         
         $this->db->insert($this->table, $data);    

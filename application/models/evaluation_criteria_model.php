@@ -2,6 +2,7 @@
 
 class Evaluation_criteria_model extends CI_Model
 {
+    private $table = 'evaluation_criteria';
     function __construct()
     {
         parent::__construct();
@@ -9,22 +10,29 @@ class Evaluation_criteria_model extends CI_Model
     
     public function get_evaluation_criterials()
     {
-        return $this->db->get($this->table)->result();
+        $ecs = $this->db->get($this->table)->result();
+        $data = array();
+        foreach($ecs as $ec){
+            $data[$ec->idEvaluation_criteria] = $ec->description . ' - %'. $ec->percentage;
+        } 
+        return $data;
     }
     
-    public function get_evaluation_criterial($evaluation_criteria_id)
+    public function get_evaluation_criteria($evaluation_criteria_id)
     {
-        return $this->db->get_where($this->table,array('evaluation_criteria_id'=>$evaluation_criteria_id))->result();
+        return $this->db->get_where($this->table,array('idEvaluation_criteria'=>$evaluation_criteria_id))->row();
     }
     
     public function insert_evaluation_criteria()
     {
         $data = array(
-            'percentage' => $this->post('percentage'),
-            'description' => $this->post('description')
+            
+            'percentage' => $this->input->post('percentage'),
+            'description' => $this->input->post('description')
         );
         
-        $this->db->insert($this->table, $data);    
+        $this->db->insert($this->table, $data);
+        return $this->db->insert_id();    
     }
     
     public function update_evaluation_criteria($evaluation_criteria_id)

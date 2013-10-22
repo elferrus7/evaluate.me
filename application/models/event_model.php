@@ -11,8 +11,9 @@ class Event_model extends CI_Model {
         $this->load->library('form_validation');
     }
 
-    public function get_events()
+    public function get_events($limit,$offset)
     {
+        $this->db->limit($limit,$offset);
         return $this->db->get($this->table)->result();  
     }
     
@@ -63,7 +64,9 @@ class Event_model extends CI_Model {
     
     public function delete_event($event_id)
     {
-        $this->db->where('Events_id',$event_id);
+        $this->db->where('Events_idEvents',$event_id);
+        $this->db->delete($this->event_users);
+        $this->db->where('idEvents',$event_id);
         $this->db->delete($this->table);
     }
 
@@ -83,6 +86,11 @@ class Event_model extends CI_Model {
             }
             
         return $this->db->get('Users')->result();
+    }
+    
+    public function count_events()
+    {
+        return $this->db->count_all($this->table);
     }
     
     public function form_validation()

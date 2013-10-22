@@ -3,7 +3,7 @@
         $('#success').hide();
         $('#submit').click(function (){
             var judges = [];
-            $('#selected > li').each(function (){
+            $('.judge').each(function (){
                   judges.push($(this).data('id'));
             });
             //console.log(judges);
@@ -18,8 +18,8 @@
                 data: {'name':name,'date':date,'description':description,'judges': judges},
                 success: function(resp){
                     console.log(resp);
-                    if(!resp.stat){
-                        console.log('simon');
+                    var jason = jQuery.parseJSON(resp);
+                    if(jason.stat){
                         $('#success').show('slow');
                     }
                 }

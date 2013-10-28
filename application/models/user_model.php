@@ -20,12 +20,17 @@ class User_model extends CI_Model
     
     public function insert_user()
     {
+        $this->load->library('encrypt');
         $data = array(
-            'percentage' => $this->post('percentage'),
-            'description' => $this->post('description')
+            'email' => $this->post('email'),
+            'username' =>$this->post('email'),
+            'password' => $this->encrypt->encode($this->post('password')),
+            'first_name' => $this->post('first_name'),
+            'last_name' => $this->post('last_name')
         );
-        
-        $this->db->insert($this->table, $data);    
+        $this->db->insert($this->table, $data);
+        $roles = $this->input->post('roles');
+            
     }
     
     public function update_user($user_id)
@@ -42,5 +47,12 @@ class User_model extends CI_Model
     {
         $this->db->where('users_id',$user_id);
         $this->db->delete($this->table);
+    }
+    
+    public function form_validation()
+    {
+        $this->load->library('form_validation');
+        $this->form_validation->set_rules();
+        return $this->form_validation->run();
     }
 }

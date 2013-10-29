@@ -3,7 +3,7 @@
         $('#success').hide();
         $('#submit').click(function (){
             var judges = [];
-            $('.judge').each(function (){
+            $('#selected .judge').each(function (){
                   judges.push($(this).data('id'));
             });
             //console.log(judges);

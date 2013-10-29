@@ -3,7 +3,7 @@
         $('#success').hide();
         $('#submit').click(function (){
             var judges = [];
-            $('.judge').each(function (){
+            $('#selected .judge').each(function (){
                   judges.push($(this).data('id'));
             });
             //console.log(judges);
@@ -53,6 +53,7 @@
     <section id="connected">
         <h5>Judges Available</h5>
         <ul class="connected list">
+            <li class="disabled"></li>
             <?php echo $judges; ?>
         </ul>
         <h5>Judges in the event</h5>

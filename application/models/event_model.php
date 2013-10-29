@@ -8,7 +8,6 @@ class Event_model extends CI_Model {
     function __construct()
     {
         parent::__construct();
-        $this->load->library('form_validation');
     }
 
     public function get_events($limit,$offset)
@@ -39,6 +38,7 @@ class Event_model extends CI_Model {
             }
             return TRUE;
         }
+        return FALSE;
     }
     
     public function update_event()
@@ -95,6 +95,7 @@ class Event_model extends CI_Model {
     
     public function form_validation()
     {
+        $this->load->library('form_validation');
         $this->form_validation->set_rules('name', 'Name', 'required');
         $this->form_validation->set_rules('date', 'Date', 'required'); 
         $this->form_validation->set_rules('description', 'Description', 'required');

@@ -8,8 +8,14 @@ class Evaluation_criteria_model extends CI_Model
         parent::__construct();
     }
     
-    public function get_evaluation_criterials()
+    public function get_evaluation_criterials($evs = FALSE)
     {
+        if(is_array($evs)){
+            foreach($evs as $ev){
+                $this->db->where('idEvaluation_criteria !=', $ev->idEvaluation_criteria);
+            }
+        }
+        $this->db->order_by('percentage',"asc");
         $ecs = $this->db->get($this->table)->result();
         $data = array();
         foreach($ecs as $ec){

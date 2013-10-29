@@ -13,7 +13,7 @@
                         <?php echo anchor('events/display_events','Events') ?>
                     </li>
                     <li>
-                        <?php echo anchor('auth/display_users','Users') ?>
+                        <?php echo anchor('users/display_users','Users') ?>
                     </li>
                 </ul>
             </div>

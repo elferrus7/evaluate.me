@@ -37,7 +37,7 @@ class Events extends CI_Controller {
         $this->table->set_template($tmpl);
         
         $limit = 20;
-        $offeset = ($event_id = $this->uri->segment(3))? $event_id = $this->uri->segment(3): 0; 
+        $offeset = ($this->uri->segment(3))?  $this->uri->segment(3): 0; 
         $this->load->library('pagination');
         $this->config->load('pagination_html');
         $config = $this->config->item('tmpl');

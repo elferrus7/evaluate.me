@@ -9,9 +9,18 @@ class Performance_level_model extends CI_Model
         parent::__construct();
     }
     
-    public function get_performance_levels()
+    public function get_performance_levels($pl_ids = FALSE)
     {
+        if(is_array($pl_ids))
+        {
+            foreach($pl_ids as $pl_id)
+            {
+                $this->db->where('idPerformance_levels !=',$pl_id);   
+            }
+        }
+        $this->db->order_by('percentage',"desc");
         $pls = $this->db->get($this->table)->result();
+        $data = array();
         foreach($pls  as $pl){
             $data[$pl->idPerformance_levels] = $pl->description . ' - %' . $pl->percentage;
         }
@@ -30,7 +39,8 @@ class Performance_level_model extends CI_Model
             'description' => $this->input->post('description')
         );
         
-        $this->db->insert($this->table, $data);    
+        $this->db->insert($this->table, $data);
+        return $this->db->insert_id();    
     }
     
     public function update_performance_level($performance_level_id)

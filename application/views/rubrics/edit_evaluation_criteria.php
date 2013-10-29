@@ -126,7 +126,7 @@
 <div class="span9 offset1">
     <h3><?php echo $rubric->name; ?></h3>
     <h4><?php echo '%'.$percentage; ?></h4>
-    <?php echo form_open('rubrics/insert_evaluation_criteria','',array('rubric' => $rubric_id)); ?>
+    <?php echo form_open('rubrics/update_evaluation_criteria','',array('rubric' => $rubric_id,'ec_id' => $ec_id)); ?>
         <label for="evaluation_criteria">Evaluation Criteria</label>
         <?php echo form_dropdown('evaluation_criteria',$evaluation_criteria,'','class="drpdwnEvaluation" style="width:520px;"'); ?>
         <a class="btn" href="#InsertEvaluation" role="button" data-toggle="modal" title="Add new Evaluation Criteria"><i class="icon-plus"></i></a>
@@ -165,7 +165,6 @@
                 </td>
             </tr>
         </table>
-        <input class="btn btn-primary" type="submit" style="margin-left: 260px;" value="Next" name="submit" />
         <input class="btn" type="submit" style="margin-left: 260px;" value="Submit" name="submit" />
     </form>
     <div id="InsertEvaluation" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">

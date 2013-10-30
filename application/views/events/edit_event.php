@@ -21,7 +21,8 @@
                 success: function(resp){
                     var jason = jQuery.parseJSON(resp);
                     if(jason.stat){
-                        $('#success').show('slow');
+                        window.location = base_url + 'index.php/events/details_event/' + jason.event_id
+                        //$('#success').show('slow');
                     }
                 }
             });
@@ -33,7 +34,7 @@
     <!-- Content span -->
     <?php echo form_open('events/create_event'); ?>
     <fieldset>
-        <legend>New Event</legend>
+        <legend>Edit Event</legend>
         <label for="name">Name</label>
         <?php echo form_error('name', '<div class="alert alert-error">', '</div>'); ?>
         <input type="text" placeholder="Name" name="name" value="<?php echo set_value('name',$event->name);?>" />

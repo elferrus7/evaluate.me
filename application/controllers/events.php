@@ -66,16 +66,42 @@ class Events extends CI_Controller {
     {
         if(($event_id = $this->uri->segment(3)) === FALSE)redirect('events/display_events');
         
+        $this->load->helper('form');
         $this->load->library('table');
         $this->config->load('table_html');
         $tmpl = $this->config->item('tmpl');
         $this->table->set_template($tmpl);
         $event = $this->event_model->get_event($event_id);
-        $this->table->set_heading('','');
-        $this->table->add_row('Event Name', $event->name);
+        $this->table->set_heading('Details','');
+        $this->table->add_row('Event Name', $event->name .' ' . anchor('events/edit_event/'.$event->idEvents,'<i class="icon-pencil"></i>','title="Edit Event"'));
         $this->table->add_row('Date', $event->date);
         $this->table->add_row('Description', $event->description);
         $data['table'] = $this->table->generate();
+        
+        $this->table->clear();
+        $judges = $this->event_model->get_judges_event($event_id);
+        $this->table->set_heading('Judges','');
+        foreach($judges as $judge){
+            $this->table->add_row($judge->first_name . ' ' . $judge->last_name,anchor('users/details_user/'.$judge->idUsers,'<i class="icon-zoom-in"></i>'));
+        }
+        $data['table_judges'] = $this->table->generate();
+        
+        $data['students'] = $this->event_model->get_students();
+        $this->table->clear();
+        $tmpl['table_open'] = '<table class="table table-stripped" id="projects">';
+        $this->table->set_template($tmpl);
+        $this->table->set_heading('Projects','','');
+        
+        $projects = $this->event_model->get_event_projects($event_id);
+        
+        foreach($projects as $project){
+            $this->table->add_row($project->team_name,$project->project_name,$project->description);
+        }
+        $data['rubrics'] = $this->event_model->get_rubrics();
+        $data['event_rubric'] = $this->event_model->get_event_rubrics($event_id);
+        $data['table_projects'] = $this->table->generate();
+        $data['event_id'] = $event_id;
+        $data['chosen'] = TRUE;
         $data['content'] = 'events/details_event';
         $data['title'] = 'Evaluate.me';
         $this->load->view('index.php',$data);
@@ -125,8 +151,8 @@ class Events extends CI_Controller {
     }
     public function insert_event()
     {
-        if($this->event_model->insert_event()){
-            echo json_encode(array('stat'=>TRUE));
+        if($event_id = $this->event_model->insert_event()){
+            echo json_encode(array('stat'=>TRUE,'event_id'=>$event_id));
         } else {
             echo json_encode(array('stat'=>FALSE));
         } 
@@ -134,12 +160,32 @@ class Events extends CI_Controller {
     
     public function update_event()
     {
+        $event_id = $this->input->post('event_id');
         if($this->event_model->update_event()){
-            echo json_encode(array('stat'=>TRUE));
+            echo json_encode(array('stat'=>TRUE,'event_id'=>$event_id));
         } else {
             echo json_encode(array('stat'=>FALSE));
         }
     }
+    
+    public function insert_project()
+    {
+        if($project_id = $this->event_model->insert_project()){
+            echo json_encode(array('stat'=> TRUE,'project_id'=>$project_id));
+        }else {
+            echo json_encode(array('stat'=>FALSE));
+        }
+    }
+    
+    public function select_rubric()
+    {
+        if($this->event_model->select_rubric()){
+            echo json_encode(array('stat'=>TRUE));
+        }else{
+            echo json_encode(array('stat'=>FALSE));
+        }
+    }
+    
 }
 
 /* End of file events.php */

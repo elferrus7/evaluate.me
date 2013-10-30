@@ -5,6 +5,11 @@ class Event_model extends CI_Model {
     private $table = 'events';
     private $event_users = 'events_has_users';
     private $event_view = 'vwevents';
+    private $students = 'students';
+    private $projects = 'projects';
+    private $project_students = 'projects_has_students';
+    private $rubrics = 'rubrics';
+    private $event_rubrics = 'events_has_rubrics';
     function __construct()
     {
         parent::__construct();
@@ -36,7 +41,7 @@ class Event_model extends CI_Model {
                 $data_judges = array('Events_idEvents' => $event_id, 'Users_idUsers' => $judge);
                 $this->db->insert($this->event_users, $data_judges);
             }
-            return TRUE;
+            return $event_id;
         }
         return FALSE;
     }
@@ -86,6 +91,78 @@ class Event_model extends CI_Model {
             }
             
         return $this->db->get('Users')->result();
+    }
+    
+    public function get_students()
+    {
+        $students = $this->db->get($this->students)->result();
+        $data = array();
+        foreach($students as $student){
+            $data[$student->idStudents] = $student->first_name . ' ' .$student->last_name;
+        } 
+        return $data;
+    }
+    
+    public function insert_project()
+    {
+        $this->load->library('form_validation');
+        $this->form_validation->set_rules('team_name', 'Team Name', 'required');
+        $this->form_validation->set_rules('project_name', 'Project Name', 'required');
+        $this->form_validation->set_rules('description', 'Description', 'required');
+        $this->form_validation->set_rules('students', 'Description', 'required');
+        if($this->form_validation->run()){
+            $data = array(
+                'team_name' => $this->input->post('team_name'),
+                'project_name' => $this->input->post('project_name'),
+                'description' => $this->input->post('description'),
+                'Events_idEvents' => $this->input->post('event_id')
+            );
+            $this->db->insert($this->projects,$data);
+            $project_id = $this->db->insert_id();
+            $students = $this->input->post('students');
+            foreach($students as $student){
+                $data_project = array('Projects_idProjects'=>$project_id,'Students_idStudents' =>$student);
+                $this->db->insert($this->project_students, $data_project);
+            }
+            
+            return $project_id;
+        }
+        return FALSE;
+    }
+    
+    public function get_event_projects($event_id)
+    {
+        return $this->db->get_where($this->projects,array('Events_idEvents'=>$event_id))->result();
+    }
+    
+    public function get_rubrics()
+    {
+        $rubrics =$this->db->get($this->rubrics)->result();
+        $data = array();
+        foreach($rubrics as $rubric)
+        {
+         $data[$rubric->idRubrics] = $rubric->name;
+        }
+        return $data;    
+    }
+    public function get_event_rubrics($event_id)
+    {
+        $query = $this->db->get_where($this->event_rubrics,array('Events_idEvents' => $event_id));
+        if($query->num_rows() > 0){
+            $rubric_id = $query->row()->Rubrics_idRubrics;
+            $rubric = $this->db->get_where($this->rubrics,array('idRubrics'=>$rubric_id))->row();
+            return $rubric;
+        }
+        return FALSE;
+    }
+    
+    public function select_rubric(){
+        $data = array(
+            'Rubrics_idRubrics' => $this->input->post('rubric_id'),
+            'Events_idEvents' => $this->input->post('event_id')
+        );
+        $this->db->insert($this->event_rubrics,$data);
+        return TRUE;
     }
     
     public function count_events()

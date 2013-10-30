@@ -20,7 +20,8 @@
                     console.log(resp);
                     var jason = jQuery.parseJSON(resp);
                     if(jason.stat){
-                        $('#success').show('slow');
+                        window.location = base_url + 'index.php/events/details_event/' + jason.event_id
+                        //$('#success').show('slow');
                     }
                 }
             });

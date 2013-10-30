@@ -33,6 +33,11 @@
             </script>
         <?php endif; ?>
         
+        <?php if(isset($chosen)):?>
+            <link type="text/css" href="<?php echo base_url(); ?>bootstrap/js/chosen/chosen.min.css" rel="stylesheet" />
+            <script src="<?php echo base_url(); ?>bootstrap/js/chosen/chosen.jquery.js"></script>
+        <?php endif; ?>
+        
     </head>
     <body>
         <div class="row-fluid">

@@ -170,6 +170,19 @@ class Event_model extends CI_Model {
         return $this->db->count_all($this->table);
     }
     
+    public function get_project($project_id){
+        return $this->db->get_where($this->projects,array('idProjects'=>$project_id))->row();
+    }
+    
+    public function get_project_students($project_id){
+        $students = $this->db->get_where($this->project_students,array('Projects_idProjects'=>$project_id))->result();
+        $data = array();
+        foreach($students as $student){
+            $data[] = $this->db->get_where($this->students,array('idStudents'=>$student->Students_idStudents))->row();
+        }
+        return $data;
+    }
+    
     public function form_validation()
     {
         $this->load->library('form_validation');

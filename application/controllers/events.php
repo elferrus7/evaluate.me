@@ -95,7 +95,7 @@ class Events extends CI_Controller {
         $projects = $this->event_model->get_event_projects($event_id);
         
         foreach($projects as $project){
-            $this->table->add_row($project->team_name,$project->project_name,$project->description);
+            $this->table->add_row($project->team_name,$project->project_name,$project->description . ' ' . anchor('events/details_project/'.$project->idProjects,'<i class="icon-pencil"></i>','title="Project details"'));
         }
         $data['rubrics'] = $this->event_model->get_rubrics();
         $data['event_rubric'] = $this->event_model->get_event_rubrics($event_id);
@@ -106,6 +106,32 @@ class Events extends CI_Controller {
         $data['title'] = 'Evaluate.me';
         $this->load->view('index.php',$data);
     }
+    
+    public function details_project()
+    {
+        $project_id = $this->uri->segment(3);
+        $project = $this->event_model->get_project($project_id);
+        $students = $this->event_model->get_project_students($project_id);
+        
+        $this->load->library('table');
+        $this->config->load('table_html');
+        $tmpl = $this->config->item('tmpl');
+        $this->table->set_template($tmpl);
+        
+        $this->table->set_heading('Project','');
+        $this->table->add_row('Project name',$project->project_name);
+        $this->table->add_row('Team name',$project->team_name);
+        $this->table->add_row('Description',$project->team_name);
+        //echo print_r($students);
+        foreach($students as $student){
+            $this->table->add_row('Student',$student->first_name . ' ' . $student->last_name);
+        }
+        $data['table'] = $this->table->generate();
+        $data['content'] = 'events/details_project';
+        $data['title'] = 'Evaluate.me';
+        $this->load->view('index.php',$data);
+    }
+    
     public function create_event()
     {
         $this->load->helper('form');

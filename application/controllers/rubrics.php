@@ -62,7 +62,7 @@ class Rubrics extends CI_Controller {
         $rubric_ev = $this->rubric_model->get_vwrubric($rubric_id);
         $this->table->set_heading('Evaluation Criteria','Performance Levels','','','','');
         foreach($rubric_ev as $rubric_ev){
-            $ev_pls = $this->rubric_model->get_vwpl($rubric_ev->idEvaluation_criteria);
+            $ev_pls = $this->rubric_model->get_vwpl($rubric_ev->idEvaluation_criteria,$rubric_ev->idRubrics);
             $row = array('<p>'.$rubric_ev->ec_description. '</p> <p>%'. $rubric_ev->percentage.'</p>');
             foreach($ev_pls as $ev_pl){
                 $row[] = '<p>' . $ev_pl->pl_description . '</p> <p>%' . $ev_pl->pl_percentage. '</p>';
@@ -204,7 +204,9 @@ class Rubrics extends CI_Controller {
     
     public function delete_rubric()
     {
-        
+        $rubric_id = $this->uri->segment(3);
+        $this->rubric_model->delete_rubric($rubric_id);
+        redirect('rubrics/display_rubrics');
     }
     
     public function get_pl()

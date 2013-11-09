@@ -32,10 +32,10 @@ class Rubric_model extends CI_Model{
         return $this->db->get_where($this->rubric_view,array('idRubrics'=>$rubric_id))->result();
     }
     
-    public function get_vwpl($evaluation_criteria_id)
+    public function get_vwpl($evaluation_criteria_id,$rubric_id)
     {
         $this->db->order_by('pl_percentage',"desc");
-        return $this->db->get_where($this->ec_pl_view,array('idEvaluation_criteria'=>$evaluation_criteria_id))->result();
+        return $this->db->get_where($this->ec_pl_view,array('idEvaluation_criteria'=>$evaluation_criteria_id,'Rubrics_idRubrics'=>$rubric_id))->result();
     }
     
     public function insert_rubric()
@@ -69,8 +69,11 @@ class Rubric_model extends CI_Model{
     
     public function delete_rubric($rubric_id)
     {
-        $this->db->where('idRubrics',$rubric_id);
-        $this->db->delete($this->table);
+        $this->db->delete($this->rubric_ec,array('Rubrics_idRubrics'=>$rubric_id));
+        $this->db->delete($this->ec_pl,array('Rubrics_idRubrics'=>$rubric_id));
+        $this->db->delete($this->table,array('idRubrics'=>$rubric_id));
+        
+        return TRUE;    
     }
     
     /*public function get_evaluation_criteria()
@@ -147,4 +150,5 @@ class Rubric_model extends CI_Model{
     {
         return $this->db->count_all($this->table);
     }
+    
 }

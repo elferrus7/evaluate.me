@@ -3,23 +3,30 @@
 class Auth extends CI_Controller {
 
     /**
-     * Index Page for this controller.
-     *
-     * Maps to the following URL
-     *      http://example.com/index.php/welcome
-     *  - or -  
-     *      http://example.com/index.php/welcome/index
-     *  - or -
-     * Since this controller is set as the default controller in 
-     * config/routes.php, it's displayed at http://example.com/
-     *
-     * So any other public methods not prefixed with an underscore will
-     * map to /index.php/welcome/<method_name>
-     * @see http://codeigniter.com/user_guide/general/urls.html
+     * Este controlador solo maneja las funciones de login o logut pero si se quiere implementar otras funciones
+     * como recuperación de password u otras este es el lugar para hacerlas
      */
     public function index()
     {
-        $this->load->view('login');
+        $this->load->helper('form');
+        $this->load->view('auth/login');
+    }
+    
+    public function login()
+    {
+        $this->load->model('user_model');
+        if($this->user_model->login()){
+            redirect('events/display_events');
+        }
+         //$this->session->set_flashdata('error','');
+        redirect('auth');
+    }
+    
+    public function logout()
+    {
+        $this->load->library('session');
+        $this->session->unset_userdata(array('idUsers','username'));
+        redirect('auth');
     }
 }
 

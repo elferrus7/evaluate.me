@@ -88,6 +88,8 @@ class Evaluation_model extends CI_Model{
     }
     
     public function update_evaluation(){
+        $this->load->model('performance_level_model');
+        $this->load->model('evaluation_criteria_model');
         $evaluation_id = $this->input->post('evaluation_id');
         $pl = $this->performance_level_model->get_performance_level($this->input->post('pls'));
         $ec = $this->evaluation_criteria_model->get_evaluation_criteria($this->input->post('evaluation_criteria_id'));

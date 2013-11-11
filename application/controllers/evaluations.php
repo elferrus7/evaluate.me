@@ -91,6 +91,10 @@ class Evaluations extends CI_Controller{
     
     public function update_evaluation()
     {
-        
+        $evaluation_id = $this->input->post('evaluation_id'); 
+        if($this->evaluation_model->update_evaluation()){
+            redirect('evaluations/details_evaluation/'.$evaluation_id);
+        }
+        redirect('evaluations/edit_evaluation/'.$evaluation_id);
     }
 }

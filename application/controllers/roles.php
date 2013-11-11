@@ -8,6 +8,8 @@ class Roles extends CI_Controller {
     function __construct() {
         parent::__construct();
         $this->load->model('role_model');
+        //$this->load->library('auth');
+        //if(!$this->auth->have_auth()) redirect('auth');
     }
     
     public function index()

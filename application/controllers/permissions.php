@@ -8,6 +8,8 @@ class Permissions extends CI_Controller {
     function __construct() {
         parent::__construct();
         $this->load->model('permission_model');
+        //$this->load->library('auth');
+        //if(!$this->auth->have_auth()) redirect('auth');
     }
     
     public function index()

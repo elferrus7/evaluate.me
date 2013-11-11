@@ -6,6 +6,8 @@ class Rubrics extends CI_Controller {
     {
         parent::__construct();
         $this->load->model('rubric_model');
+        //$this->load->library('auth');
+        //if(!$this->auth->have_auth()) redirect('auth');
     }
     
     public function index()

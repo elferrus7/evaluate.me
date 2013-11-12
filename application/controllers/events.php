@@ -22,8 +22,8 @@ class Events extends CI_Controller {
     {
         parent::__construct();
         $this->load->model('event_model');
-        $this->load->library('auth');
-        if(!$this->auth->have_auth()) redirect('auth');
+        $this->load->library('auth_lib');
+        if(!$this->auth_lib->have_auth()) redirect('auth');
     }
      
     public function index()

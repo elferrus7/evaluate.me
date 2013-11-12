@@ -5,7 +5,7 @@
  * para accesar a las funciones
  */
  
- class Auth{
+ class Auth_lib{
      var $CI;
      public function __contruct()
      {
@@ -19,9 +19,16 @@
          return FALSE;
      }
      
-     public function have_role()
+     public function have_role($role_name)
      {
-         
+         $CI =& get_instance();
+         $CI->load->model('user_model');
+         $user_id = $CI->session->userdata('idUsers');
+         $roles = $CI->user_model->get_user_roles($user_id);
+         foreach($roles as $role){
+             if($role->name == $role_name) return TRUE;
+         }
+         return FALSE;
      }
      
      public function have_permisssion()

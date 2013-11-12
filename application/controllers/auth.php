@@ -15,7 +15,9 @@ class Auth extends CI_Controller {
     public function login()
     {
         $this->load->model('user_model');
+        $this->load->library('auth_lib');
         if($this->user_model->login()){
+            if($this->auth_lib->have_role('Judge')) redirect('rubrics/display_rubrics');
             redirect('events/display_events');
         }
          //$this->session->set_flashdata('error','');

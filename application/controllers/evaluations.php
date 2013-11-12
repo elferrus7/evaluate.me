@@ -23,7 +23,7 @@ class Evaluations extends CI_Controller{
         if(!$ec){redirect('evaluations/details_evaluation/'.$project_id);}
         $pls = $this->evaluation_model->get_performance_levels($ec->idEvaluation_criteria);
         $data['rubric'] = $rubric;
-        $data['user'] = 1;
+        $data['user'] = $this->session->userdata('idUsers');
         $data['project'] = $project;
         $data['event'] = $event;
         $data['ec'] = $ec;
@@ -97,4 +97,44 @@ class Evaluations extends CI_Controller{
         }
         redirect('evaluations/edit_evaluation/'.$evaluation_id);
     }
+    
+    public function events(){
+        $user_id = $this->session->userdata('idUsers');
+        $events = $this->evaluation_model->get_events_user($user_id);
+        $this->load->model('event_model');
+        $this->load->library('table');
+        $this->config->load('table_html');
+        $tmpl = $this->config->item('tmpl');
+        $this->table->set_template($tmpl);
+        $this->table->set_heading('Event','Description', 'Start Date','Close Date','');
+        foreach($events as $event){
+            $even = $this->event_model->get_event($event->Events_idEvents);
+            $this->table->add_row($even->name,$even->description,$even->date,'',anchor('evaluations/projects/'.$even->idEvents,'<i class="icon-search"></i>'));
+        }
+        $data['table']= $this->table->generate();
+        $data['pagination']='';
+        $data['title'] = 'Events';
+        $data['content'] = 'events/display_events';
+        $this->load->view('index.php',$data);
+    }
+  
+  public function projects(){
+      $event_id = $this->uri->segment(3);
+      $this->load->model('event_model');
+      $projects = $this->event_model->get_event_projects($event_id);
+      $this->load->library('table');
+        $this->config->load('table_html');
+        $tmpl = $this->config->item('tmpl');
+        $this->table->set_template($tmpl);
+        $this->table->set_heading('Project','Description', 'Team','Evaluated','');
+      foreach($projects as $project){
+          $pr = $this->evaluation_model->get_project($project->idProjects);
+          $this->table->add_row($pr->project_name,$pr->description,$pr->team_name,'<i class="icon-remove"></i>',anchor('evaluations/evaluate/'.$pr->idProjects,'<i class="icon-search"></i>'));
+      }
+      $data['table']= $this->table->generate();
+      $data['pagination']='';
+      $data['title'] = 'Projects';
+      $data['content'] = 'events/display_events';
+      $this->load->view('index.php',$data);
+  }
 }

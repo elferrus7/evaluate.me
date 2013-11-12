@@ -3,7 +3,10 @@
     <p><b>Project name</b>: <?php echo $project->project_name; ?></p>
     <p><?php echo $ec->description; ?></p>
     <p><b><?php echo $ec->percentage; ?> Points</b></p>
-    <?php echo form_open('evaluations/insert_evaluation','',array('rubric_id'=>$rubric->idRubrics,'user_id'=>$user,'project_id'=>$project->idProjects,'evaluation_criteria_id'=>$ec->idEvaluation_criteria)); ?>
+    <?php echo form_open('evaluations/insert_evaluation','',array('rubric_id'=>$rubric->idRubrics,
+                                                                  'user_id'=>$user,
+                                                                  'project_id'=>$project->idProjects,
+                                                                  'evaluation_criteria_id'=>$ec->idEvaluation_criteria)); ?>
     <table class="table table-striped">
         <tbody>
         <?php foreach($pls as $pl): ?>

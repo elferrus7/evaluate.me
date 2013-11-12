@@ -12,6 +12,7 @@ class Evaluation_model extends CI_Model{
     private $event_rubrics = 'events_has_rubrics';
     private $rubric_evs = 'rubrics_has_evaluation_criteria';
     private $ec_pls = 'evaluation_criteria_has_performance_levels';
+    private $events_users = 'events_has_users';
     function __construct()
     {
         parent::__construct();
@@ -107,5 +108,9 @@ class Evaluation_model extends CI_Model{
     {
         $this->db->select_sum('grade');
         return $this->db->get_where($this->evaluation_vw, array('idProjects'=>$project_id))->row();
+    }
+    
+    public function get_events_user($user_id){
+        return $this->db->get_where($this->events_users,array('Users_idUsers'=>$user_id))->result();
     }
 }

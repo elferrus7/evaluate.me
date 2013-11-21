@@ -217,7 +217,7 @@
           if (data.selected && this.is_multiple) {
             this.choice_build(data);
           } else if (data.selected && !this.is_multiple) {
-            this.single_set_selected_text(data.text);
+            this.single_set_selected_text(data);
           }
         }
       }
@@ -952,7 +952,7 @@
         if (this.is_multiple) {
           this.choice_build(item);
         } else {
-          this.single_set_selected_text(item.text);
+          this.single_set_selected_text(item);
         }
         if (!((evt.metaKey || evt.ctrlKey) && this.is_multiple)) {
           this.results_hide();
@@ -969,16 +969,18 @@
     };
 
     Chosen.prototype.single_set_selected_text = function(text) {
+    	//Now the functions gets the option as a whole
       if (text == null) {
         text = this.default_text;
       }
-      if (text === this.default_text) {
+      if (text.text === this.default_text) {
         this.selected_item.addClass("chosen-default");
       } else {
         this.single_deselect_control_build();
         this.selected_item.removeClass("chosen-default");
+        this.selected_item.attr('data-id',text.value);
       }
-      return this.selected_item.find("span").text(text);
+      return this.selected_item.find("span").text(text.text);
     };
 
     Chosen.prototype.result_deselect = function(pos) {

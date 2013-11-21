@@ -6,8 +6,8 @@ class Rubrics extends CI_Controller {
     {
         parent::__construct();
         $this->load->model('rubric_model');
-        //$this->load->library('auth');
-        //if(!$this->auth->have_auth()) redirect('auth');
+        //$this->load->library('auth_lib');
+        //if(!$this->auth_lib->have_auth()) redirect('auth');
     }
     
     public function index()
@@ -111,6 +111,7 @@ class Rubrics extends CI_Controller {
                 $data['percentage'] += $ev->percentage; 
             }   
         }
+        $data['chosen'] = TRUE;
         $data['evaluation_criteria'] =  $this->evaluation_criteria_model->get_evaluation_criterials($evs);
         $data['performance_levels'] = $this->performance_level_model->get_performance_levels();
         $data['content'] = 'rubrics/create_evaluation_criteria';

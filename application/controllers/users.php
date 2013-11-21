@@ -8,8 +8,8 @@ class Users extends CI_Controller {
 	function __construct() {
 		parent::__construct();
         $this->load->model('user_model');
-        $this->load->library('auth_lib');
-        if(!$this->auth_lib->have_auth()) redirect('auth');
+        //$this->load->library('auth_lib');
+        //if(!$this->auth_lib->have_auth()) redirect('auth');
 	}
     
     public function index()

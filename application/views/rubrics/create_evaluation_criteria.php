@@ -3,11 +3,12 @@
         var base_url = "<?php echo base_url(); ?>";
         var pl_ids = [];
         
-        $('#pl_2').hide();
-        $('#pl_3').hide();
-        $('#pl_4').hide();
-        $('#pl_5').hide();
-        
+        //$('#pl_2').hide();
+        //$('#pl_3').hide();
+        //$('#pl_4').hide();
+        //$('#pl_5').hide();
+        $('.pl_dropdown').chosen();
+        $('.drpdwnEvaluation').chosen();
         $('#insert_ec').click(function(){
             var percentage = $('input[name="percentage_ec"]').val();
             var description = $('textarea[name="description_ec"]').val();
@@ -58,7 +59,7 @@
                     $.each(options.pl_ids, function(i, item) {
                         var option = new Option(item,i);
                         $('#pl_2').append(option);
-                        $('#pl_2').show('slow');
+                        //$('#pl_2').show('slow');
                     });
                 }
             });
@@ -77,7 +78,7 @@
                     $.each(options.pl_ids, function(i, item) {
                         var option = new Option(item,i);
                         $('#pl_3').append(option);
-                        $('#pl_3').show('slow');
+                        //$('#pl_3').show('slow');
                     });
                 }
             });
@@ -96,7 +97,7 @@
                     $.each(options.pl_ids, function(i, item) {
                         var option = new Option(item,i);
                         $('#pl_4').append(option);
-                        $('#pl_4').show('slow');
+                        //$('#pl_4').show('slow');
                     });
                 }
             });
@@ -115,10 +116,20 @@
                     $.each(options.pl_ids, function(i, item) {
                         var option = new Option(item,i);
                         $('#pl_5').append(option);
-                        $('#pl_5').show('slow');
+                        //$('#pl_5').show('slow');
                     });
                 }
             });
+        });
+        
+        $('#next').click(function (){
+            var pls = [];
+            $('.chosen-single').each(function(){
+                pls.push($(this).data('id'));
+            });
+            var ec = $('ec_choosen').find('.chosen-single').data('id');
+            console.log('evaluation criteria');
+            console.log(ec);
         });
         
     });
@@ -128,7 +139,7 @@
     <h4><?php echo '%'.$percentage; ?></h4>
     <?php echo form_open('rubrics/insert_evaluation_criteria','',array('rubric' => $rubric_id)); ?>
         <label for="evaluation_criteria">Evaluation Criteria</label>
-        <?php echo form_dropdown('evaluation_criteria',$evaluation_criteria,'','class="drpdwnEvaluation" style="width:520px;"'); ?>
+        <?php echo form_dropdown('evaluation_criteria',$evaluation_criteria,'','class="drpdwnEvaluation" style="width:520px;" id="ec" title="Evaluation Criteria"'); ?>
         <a class="btn" href="#InsertEvaluation" role="button" data-toggle="modal" title="Add new Evaluation Criteria"><i class="icon-plus"></i></a>
         <p>
             Description of the Evaluation Criteria
@@ -139,33 +150,17 @@
                     <th>Performance Level <a class="btn" href="#InsertPerformance" role="button" data-toggle="modal" title="Add New Performance Level"><i class="icon-plus"></i></a></th>
                 </tr>
             </thead>
+            <?php for ($i=1; $i <= 5; $i++) :?>
             <tr>
                 <td>
-                    <?php echo form_dropdown('performance_level_1',array('null' =>'Select a Performance') + $performance_levels,'','class ="pl_dropdown" id="pl_1" style="width:520px;"'); ?>
+                    <?php echo form_dropdown('performance_level_'.$i,array('null' =>'Select a Performance') + $performance_levels,'','class ="pl_dropdown" id="pl_'.$i.'" style="width:520px;" title="Performance Level"'); ?>
                 </td>
             </tr>
-            <tr>
-                <td>
-                <?php echo form_dropdown('performance_level_2',array('null' =>'Select a Performance'),'','class ="pl_dropdown" id="pl_2" style="width:520px;"'); ?>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                <?php echo form_dropdown('performance_level_3',array('null' =>'Select a Performance'),'','class ="pl_dropdown" id="pl_3" style="width:520px;"'); ?>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                <?php echo form_dropdown('performance_level_4',array('null' =>'Select a Performance'),'','class ="pl_dropdown" id="pl_4" style="width:520px;"'); ?>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                <?php echo form_dropdown('performance_level_5',array('null' =>'Select a Performance'),'','class ="pl_dropdown" id="pl_5" style="width:520px;"'); ?>
-                </td>
-            </tr>
+            <?php endfor; ?>
+            
         </table>
-        <input class="btn btn-primary" type="submit" style="margin-left: 260px;" value="Next" name="submit" />
+        <!--<input class="btn btn-primary" type="submit" style="margin-left: 260px;" value="Next" name="submit" />-->
+        <a class="btn btn-primary" id="next">Next</a>
         <input class="btn" type="submit" style="margin-left: 260px;" value="Submit" name="submit" />
     </form>
     <div id="InsertEvaluation" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">

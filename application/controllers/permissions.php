@@ -8,8 +8,10 @@ class Permissions extends CI_Controller {
     function __construct() {
         parent::__construct();
         $this->load->model('permission_model');
-        //$this->load->library('auth');
-        //if(!$this->auth->have_auth()) redirect('auth');
+        //$this->load->library('auth_lib');
+        //if(!$this->auth_lib->have_auth()) redirect('auth');
+        $this->load->library('Alert');
+        
     }
     
     public function index()
@@ -37,7 +39,7 @@ class Permissions extends CI_Controller {
         $permissions = $this->permission_model->get_permissions();
         
         $this->table->set_heading('Name','Description','');
-        $this->table->set_caption('permissions ' . anchor('permissions/create_permission','<i class="icon-plus"></i>', 'class="btn" title="New permission"'));
+        $this->table->set_caption('Permissions ' . anchor('permissions/create_permission','<i class="icon-plus"></i>', 'class="btn" title="New permission"'));
         
         foreach($permissions as $permission){
             $this->table->add_row($permission->name , $permission->description,
@@ -140,6 +142,8 @@ class Permissions extends CI_Controller {
     {
         if(($permission_id = $this->uri->segment(3)) === FALSE) redirect('permissions/display_permissions');
         $this->permission_model->delete_permission($permission_id);
+        $this->alert->add_alert('Permission deleted','success');
+        $this->alert->set_alerts();
         redirect('permissions/display_permissions');
     }
     

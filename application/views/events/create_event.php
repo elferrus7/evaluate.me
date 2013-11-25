@@ -1,6 +1,6 @@
 <script type="text/javascript">
     $(document).ready(function (){
-        $('#success').hide();
+        $('#alert').hide();
         $('#submit').click(function (){
             var judges = [];
             $('#selected .judge').each(function (){
@@ -17,19 +17,19 @@
                 type: "POST",
                 data: {'name':name,'date':date,'description':description,'judges': judges},
                 success: function(resp){
-                    console.log(resp);
                     var jason = jQuery.parseJSON(resp);
                     if(jason.stat){
                         window.location = base_url + 'index.php/events/details_event/' + jason.event_id
-                        //$('#success').show('slow');
+                    }else {
+                        $('#alert').show('slow');
                     }
                 }
             });
         });
     });
 </script>
-<div class="alert alert-success" id="success">Event Created</div>
 <div class="span4 offset1">
+    <div class="alert alert-danger" id="alert">Please fill all the fields</div>
     <!-- Content span -->
     <?php echo form_open('events/create_event'); ?>
     <fieldset>
@@ -52,15 +52,13 @@
 </div><!-- Content span -->
 <div class="span5 ">
     <section id="connected">
-        <h5>Judges Available</h5>
         <ul class="connected list">
-            <li class="disabled"></li>
+            <li class="disabled">Judges available</li>
             <?php echo $judges; ?>
         </ul>
-        <h5>Judges in the event</h5>
         <ul class="connected list no2" id = "selected">
-            <li class="highlight">
-                Select Judges
+            <li class="disabled">
+                Judges selected
             </li>
         </ul>
     </section>

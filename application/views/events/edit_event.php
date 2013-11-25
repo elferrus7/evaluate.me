@@ -1,6 +1,6 @@
 <script type="text/javascript">
     $(document).ready(function (){
-        $('#success').hide();
+        $('#alert').hide();
         $('#submit').click(function (){
             var judges = [];
             $('#selected .judge').each(function (){
@@ -23,14 +23,16 @@
                     if(jason.stat){
                         window.location = base_url + 'index.php/events/details_event/' + jason.event_id
                         //$('#success').show('slow');
+                    } else {
+                        $('#alert').show('slow');
                     }
                 }
             });
         });
     });
 </script>
-<div class="alert alert-success" id="success">Event Created</div>
 <div class="span4 offset1">
+    <div class="alert alert-danger" id="alert">Please fill all the fields</div>
     <!-- Content span -->
     <?php echo form_open('events/create_event'); ?>
     <fieldset>

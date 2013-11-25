@@ -1,19 +1,14 @@
 <script type="text/javascript">
     $(document).ready( function(){
         var base_url = "<?php echo base_url(); ?>";
-        var pl_ids = [];
-        
-        //$('#pl_2').hide();
-        //$('#pl_3').hide();
-        //$('#pl_4').hide();
-        //$('#pl_5').hide();
+        //var pl_ids = [];
         $('.pl_dropdown').chosen();
         $('.drpdwnEvaluation').chosen();
         $('#insert_ec').click(function(){
             var percentage = $('input[name="percentage_ec"]').val();
             var description = $('textarea[name="description_ec"]').val();
             $.ajax({
-                url: base_url + "index.php/rubrics/insert_ev",
+                url: base_url + "index.php/rubrics/insert_ec",
                 async: false,
                 type: "POST",
                 data: {'percentage':percentage,'description':description},
@@ -46,10 +41,10 @@
             });
         });
         
-        $('#pl_1').change(function(){
-            var pl_id = $('#pl_1 option:selected').val();
-            pl_ids.push(pl_id);
-            $.ajax({
+        $('#pl_1_chosen').click(function(){
+            var pl_id = $('#pl_1_chosen a.chosen-single');
+            console.log(pl_id);
+            /*$.ajax({
                 url: base_url + "index.php/rubrics/get_pl",
                 async: false,
                 type: "POST",
@@ -58,83 +53,47 @@
                     var options = jQuery.parseJSON(resp);
                     $.each(options.pl_ids, function(i, item) {
                         var option = new Option(item,i);
-                        $('#pl_2').append(option);
+                        $('#pl_2_chosen').append(option);
                         //$('#pl_2').show('slow');
                     });
                 }
-            });
+            });*/
         });
         
-        $('#pl_2').change(function(){
-            var pl_id = $('#pl_2 option:selected').val();
-            pl_ids.push(pl_id);
-            $.ajax({
-                url: base_url + "index.php/rubrics/get_pl",
-                async: false,
-                type: "POST",
-                data: {'pl_ids': pl_ids},
-                success: function(resp){
-                    var options = jQuery.parseJSON(resp);
-                    $.each(options.pl_ids, function(i, item) {
-                        var option = new Option(item,i);
-                        $('#pl_3').append(option);
-                        //$('#pl_3').show('slow');
-                    });
-                }
-            });
-        });
-        
-        $('#pl_3').change(function(){
-            var pl_id = $('#pl_3 option:selected').val();
-            pl_ids.push(pl_id);
-            $.ajax({
-                url: base_url + "index.php/rubrics/get_pl",
-                async: false,
-                type: "POST",
-                data: {'pl_ids': pl_ids},
-                success: function(resp){
-                    var options = jQuery.parseJSON(resp);
-                    $.each(options.pl_ids, function(i, item) {
-                        var option = new Option(item,i);
-                        $('#pl_4').append(option);
-                        //$('#pl_4').show('slow');
-                    });
-                }
-            });
-        });
-        
-        $('#pl_4').change(function(){
-            var pl_id = $('#pl_4 option:selected').val();
-            pl_ids.push(pl_id);
-            $.ajax({
-                url: base_url + "index.php/rubrics/get_pl",
-                async: false,
-                type: "POST",
-                data: {'pl_ids': pl_ids},
-                success: function(resp){
-                    var options = jQuery.parseJSON(resp);
-                    $.each(options.pl_ids, function(i, item) {
-                        var option = new Option(item,i);
-                        $('#pl_5').append(option);
-                        //$('#pl_5').show('slow');
-                    });
-                }
-            });
-        });
-        
-        $('#next').click(function (){
+        function get_ec(btn){
             var pls = [];
-            $('.chosen-single').each(function(){
+            $('table td div a.chosen-single').each(function(){
                 pls.push($(this).data('id'));
             });
-            var ec = $('ec_choosen').find('.chosen-single').data('id');
-            console.log('evaluation criteria');
-            console.log(ec);
+            var ec = $('#ec_chosen').find('.chosen-single').data('id');
+            var rubric = <?php echo $rubric_id; ?>;
+            $.ajax({
+                url: base_url + "index.php/rubrics/insert_evaluation_criteria",
+                async: false,
+                type: "POST",
+                data: {'evaluation_criteria':ec,'rubric':rubric, 'pls':pls,'submit':btn},
+                success: function(resp){
+                    //console.log(jQuery.parseJSON(resp));
+                    var jason = jQuery.parseJSON(resp);
+                    if(jason.stat){
+                        location.assign('<?php echo base_url().'index.php/rubrics/create_evaluation_criteria/'.$rubric_id; ?>');
+                    } else {
+                        location.assign('<?php echo base_url().'index.php/rubrics/details_rubric/'.$rubric_id; ?>');
+                    }
+                }
+            });
+        }
+        $('#next').click(function (){
+            get_ec('next');
+        });
+        $('#submit').click(function (){
+            get_ec('submit');
         });
         
     });
 </script>
 <div class="span9 offset1">
+    <?php echo $this->alert->display_alerts(); ?>
     <h3><?php echo $rubric->name; ?></h3>
     <h4><?php echo '%'.$percentage; ?></h4>
     <?php echo form_open('rubrics/insert_evaluation_criteria','',array('rubric' => $rubric_id)); ?>
@@ -161,7 +120,8 @@
         </table>
         <!--<input class="btn btn-primary" type="submit" style="margin-left: 260px;" value="Next" name="submit" />-->
         <a class="btn btn-primary" id="next">Next</a>
-        <input class="btn" type="submit" style="margin-left: 260px;" value="Submit" name="submit" />
+        <a class="btn btn" id="submit" style="margin-left: 260px;">Next</a>
+        <!--<input class="btn" type="submit" style="margin-left: 260px;" value="Submit" name="submit" />-->
     </form>
     <div id="InsertEvaluation" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-header">

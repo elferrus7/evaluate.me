@@ -5,11 +5,12 @@ class Evaluations extends CI_Controller{
     {
         parent::__construct();
         $this->load->model('evaluation_model');
+        $this->load->library('Alert');
     }
     
     public function index()
     {
-        
+        redirect('evaluations/events');
     }
     
     public function evaluate()

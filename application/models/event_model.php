@@ -69,8 +69,22 @@ class Event_model extends CI_Model {
     
     public function delete_event($event_id)
     {
+        //Delete ralations with the users    
         $this->db->where('Events_idEvents',$event_id);
         $this->db->delete($this->event_users);
+        //Delete relation with the Rubric
+        $this->db->where('Events_idEvents',$event_id);
+        $this->db->delete($this->event_rubrics);
+        //Delte Project Student relations
+        $projects = $this->db->get_where($this->projects, array('Events_idEvents'=>$event_id))->result();
+        foreach($projects as $project){
+            $this->db->where('Projects_idProjects',$project->idProjects);
+            $this->db->delete($this->project_students);
+        }
+        //Delete projects releted
+        $this->db->where('Events_idEvents',$event_id);
+        $this->db->delete($this->projects);
+        //Delete Event
         $this->db->where('idEvents',$event_id);
         $this->db->delete($this->table);
     }

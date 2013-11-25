@@ -1,4 +1,5 @@
 <div class="span9 offset1">
+    <?php echo $this->alert->display_alerts(); ?>
     <?php echo form_open('rubrics/update_rubric','',array('rubric_id' =>$rubric->idRubrics)); ?>
     <fieldset>
         <legend>New Rubric</legend>

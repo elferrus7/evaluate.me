@@ -1,6 +1,6 @@
 <script type="text/javascript">
     $(document).ready(function (){
-        $('#success').hide();
+        $('#alert').hide();
         $('#submit').click(function (){
             var roles = [];
             $('#selected .role').each(function (){
@@ -22,8 +22,10 @@
                     console.log(resp);
                     var jason = jQuery.parseJSON(resp);
                     if(jason.stat){
-                        $('#success').show('slow');
+                        //$('#success').show('slow');
                         window.location = base_url + "index.php/users/details_user/" +jason.user_id 
+                    } else {
+                        $('#alert').show('slow');
                     }
                 }
             });
@@ -32,6 +34,7 @@
 </script>
 <div class="span4 offset1">
     <!-- Content span -->
+    <div class="alert alert-danger" id="alert">Please fill all the fields</div>
     <?php echo form_open('rubrics/update_rubric'); ?>
     <fieldset>
         <legend>New User</legend>
@@ -48,15 +51,14 @@
 </div><!-- Content span -->
 <div class="span5 ">
     <section id="connected">
-        <h5>Roles Available</h5>
+        <!--<h5>Roles Available</h5>-->
         <ul class="connected list">
-            <li class="disabled"></li>
+            <li class="disabled">Roles available</li>
             <?php echo $user_roles; ?>
         </ul>
-        <h5>Roles for this user</h5>
+        <!--<h5>Roles for this user</h5>-->
         <ul class="connected list no2" id = "selected">
-            <li class="disabled">
-            </li>
+            <li class="disabled">Roles selected</li>
             <?php echo $roles; ?>
         </ul>
     </section>

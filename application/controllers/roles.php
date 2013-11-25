@@ -8,8 +8,9 @@ class Roles extends CI_Controller {
     function __construct() {
         parent::__construct();
         $this->load->model('role_model');
-        //$this->load->library('auth');
-        //if(!$this->auth->have_auth()) redirect('auth');
+        //$this->load->library('auth_lib');
+        //if(!$this->auth_lib->have_auth()) redirect('auth');
+        $this->load->library('Alert');
     }
     
     public function index()
@@ -37,7 +38,7 @@ class Roles extends CI_Controller {
         $roles = $this->role_model->get_roles();
         
         $this->table->set_heading('Name','Description','');
-        $this->table->set_caption('roles ' . anchor('roles/create_role','<i class="icon-plus"></i>', 'class="btn" title="New role"'));
+        $this->table->set_caption('Roles ' . anchor('roles/create_role','<i class="icon-plus"></i>', 'class="btn" title="New role"'));
         
         foreach($roles as $role){
             $this->table->add_row($role->name , $role->description,
@@ -140,6 +141,8 @@ class Roles extends CI_Controller {
     {
         if(($role_id = $this->uri->segment(3)) === FALSE) redirect('roles/display_roles');
         $this->role_model->delete_role($role_id);
+        $this->alert->add_alert('Role deleted','success');
+        $this->alert->set_alerts();
         redirect('roles/display_roles');
     }
     

@@ -8,6 +8,7 @@ class Rubrics extends CI_Controller {
         $this->load->model('rubric_model');
         //$this->load->library('auth_lib');
         //if(!$this->auth_lib->have_auth()) redirect('auth');
+        $this->load->library('Alert');
     }
     
     public function index()
@@ -90,7 +91,13 @@ class Rubrics extends CI_Controller {
     public function insert_rubric()
     {
         $rubric_id = $this->rubric_model->insert_rubric();
-        if(!$rubric_id) redirect('rubrics/create_rubric');
+        if(!$rubric_id){
+          $this->alert->add_alert('Please fill all the fields','error');
+          $this->alert->set_alerts();
+          redirect('rubrics/create_rubric');
+        }
+        $this->alert->add_alert('Rubric Created','success');
+        $this->alert->set_alerts(); 
         redirect('rubrics/create_evaluation_criteria/' . $rubric_id);
     }
     
@@ -150,16 +157,14 @@ class Rubrics extends CI_Controller {
     
     public function insert_evaluation_criteria()
     {
-        //echo print_r($this->input->post());
-        $rubric_id = $this->input->post('rubric');
-        if($this->input->post('submit') == 'Next'){
+        if($this->input->post('submit') == 'next'){
             $this->rubric_model->insert_ec();
-            redirect('rubrics/create_evaluation_criteria/'.$rubric_id);
+            echo json_encode(array('stat'=>TRUE));
         }
         
-        if($this->input->post('submit') == 'Submit'){
+        if($this->input->post('submit') == 'submit'){
             $this->rubric_model->insert_ec();
-            redirect('rubrics/details_rubric/'.$rubric_id);
+            echo json_encode(array('stat'=>FALSE));
         }
     }
     
@@ -171,7 +176,7 @@ class Rubrics extends CI_Controller {
         redirect('rubrics/details_rubric/'.$rubric_id);
     }
     
-    public function insert_ev()
+    public function insert_ec()
     {
         $this->load->model('evaluation_criteria_model');
         $ev_id = $this->evaluation_criteria_model->insert_evaluation_criteria();
@@ -201,14 +206,23 @@ class Rubrics extends CI_Controller {
     public function update_rubric()
     {
         $rubric_id = $this->input->post('rubric_id');
-        if(!$this->rubric_model->update_rubric()) redirect('rubrics/edit_rubric/'.$rubric_id);
+        if(!$this->rubric_model->update_rubric()){
+            $this->alert->add_alert('Please fill all the fields','error');
+            $this->alert->set_alerts();
+            redirect('rubrics/edit_rubric/'.$rubric_id);
+        } 
+        $this->alert->add_alert('Rubric Updated','success');
+        $this->alert->set_alerts();
         redirect('rubrics/details_rubric/'.$rubric_id);
     }
     
     public function delete_rubric()
     {
         $rubric_id = $this->uri->segment(3);
+        if($rubric_id === FALSE)redirect('rubrics/display_rubrics');
         $this->rubric_model->delete_rubric($rubric_id);
+        $this->alert->add_alert('Rubric Deleted','success');
+        $this->alert->set_alerts();
         redirect('rubrics/display_rubrics');
     }
     

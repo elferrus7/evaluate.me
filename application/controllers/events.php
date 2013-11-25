@@ -24,6 +24,7 @@ class Events extends CI_Controller {
         $this->load->model('event_model');
         //$this->load->library('auth_lib');
         //if(!$this->auth_lib->have_auth()) redirect('auth');
+        $this->load->library('Alert');
     }
      
     public function index()
@@ -175,11 +176,15 @@ class Events extends CI_Controller {
     {
         if(($event_id = $this->uri->segment(3)) === FALSE)redirect('events/display_events');   
         $this->event_model->delete_event($event_id);
+        $this->alert->add_alert('Event deleted','success');
+        $this->alert->set_alerts();
         redirect('events/display_events');
     }
     public function insert_event()
     {
         if($event_id = $this->event_model->insert_event()){
+            //$this->alert->add_alert('Event created','success');
+            //$this->alert->set_alerts();
             echo json_encode(array('stat'=>TRUE,'event_id'=>$event_id));
         } else {
             echo json_encode(array('stat'=>FALSE));
@@ -190,6 +195,8 @@ class Events extends CI_Controller {
     {
         $event_id = $this->input->post('event_id');
         if($this->event_model->update_event()){
+            //$this->alert->add_alert('Event updated','success');
+            //$this->alert->set_alerts();
             echo json_encode(array('stat'=>TRUE,'event_id'=>$event_id));
         } else {
             echo json_encode(array('stat'=>FALSE));

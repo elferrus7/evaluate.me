@@ -42,8 +42,9 @@ class Users extends CI_Controller {
         foreach($users as $user){
             $this->table->add_row($user->first_name .' '. $user->last_name, $user->email,
                                   anchor('users/details_user/'.$user->idUsers,'<i class="icon-zoom-in"></i>').
-                                  anchor('users/edit_user/'.$user->idUsers,'<i class="icon-pencil"></i>').
-                                  anchor('users/delete_user/'.$user->idUsers,'<i class="icon-remove"></i>'));
+                                  anchor('users/edit_user/'.$user->idUsers,'<i class="icon-pencil"></i>')
+                                  //anchor('users/delete_user/'.$user->idUsers,'<i class="icon-remove"></i>')
+                                  );
         }
         
         $data['table'] = $this->table->generate();

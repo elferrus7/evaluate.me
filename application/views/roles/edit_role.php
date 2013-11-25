@@ -1,6 +1,6 @@
 <script type="text/javascript">
     $(document).ready(function (){
-        $('#success').hide();
+        $('#alert').hide();
         $('#submit').click(function (){
             var permissions = [];
             $('#selected .permission').each(function (){
@@ -20,8 +20,9 @@
                     console.log(resp);
                     var jason = jQuery.parseJSON(resp);
                     if(jason.stat){
-                        $('#success').show('slow');
                         window.location = base_url + "index.php/roles/details_role/" +jason.role_id 
+                    } else {
+                        $('#alert').show('slow');
                     }
                 }
             });
@@ -30,6 +31,7 @@
 </script>
 <div class="span4 offset1">
     <!-- Content span -->
+    <div class="alert alert-danger" id="alert">Please fill all the fields</div>
     <?php echo form_open('roles/insert_role'); ?>
     <fieldset>
         <legend>Edit Role</legend>

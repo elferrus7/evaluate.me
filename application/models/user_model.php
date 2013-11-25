@@ -8,6 +8,7 @@ class User_model extends CI_Model
     private $roles_permissions = 'roles_has_permissions';
     private $permissions_operations = 'permissions_has_operations';
     private $operation = 'operations';
+    private $event_user = 'events_has_users';
     function __construct()
     {
         parent::__construct();
@@ -73,7 +74,10 @@ class User_model extends CI_Model
     
     public function delete_user($user_id)
     {
+        //Delete User Role relation
         $this->db->delete($this->users_roles ,array('Users_idUsers'=>$user_id));
+        //Delete Event User relation
+        $this->db->delete($this->event_user ,array('Users_idUsers'=>$user_id));
         $this->db->delete($this->table,array('idUsers'=>$user_id));
         return TRUE;
     }

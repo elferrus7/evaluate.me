@@ -88,25 +88,26 @@ class Rubric_model extends CI_Model{
     
     public function insert_ec()
     {
-        if($this->validate_ec())
-        {
+        //if($this->validate_ec())
+        //{
             $this->db->trans_start();
             $data = array(
                 'Evaluation_criteria_idEvaluation_criteria' => $this->input->post('evaluation_criteria'),
                 'Rubrics_idRubrics' => $this->input->post('rubric')
             );
             $this->db->insert($this->rubric_ec,$data);
-            
-            for ($i=1; $i <= 5; $i++) { 
+            $pls = $this->input->post('pls');
+            //echo print_r($pls);
+            foreach ($pls as $pl) { 
                 $data = array(
                     'Evaluation_criteria_idEvaluation_criteria' => $this->input->post('evaluation_criteria'),
-                    'Performance_levels_idPerformance_levels' => $this->input->post('performance_level_'.$i),
+                    'Performance_levels_idPerformance_levels' => $pl,
                     'Rubrics_idRubrics' => $this->input->post('rubric')
                 );
                 $this->db->insert($this->ec_pl,$data);    
             }
             $this->db->trans_complete();    
-        }
+        //}
           
     }
     

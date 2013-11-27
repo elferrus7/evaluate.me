@@ -18,6 +18,7 @@
         <?php endforeach; ?>
         </tbody>
     </table>
+    <input class="btn" type="submit"  value="Back" />
     <input class="btn btn-primary" type="submit"  value="Next" />
     <?php echo form_close(); ?>
 </div><!-- Content span -->

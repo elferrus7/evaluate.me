@@ -63,14 +63,15 @@ class Rubrics extends CI_Controller {
         $rubric_id = $this->uri->segment(3);
         $rubric = $this->rubric_model->get_rubric($rubric_id);
         $rubric_ev = $this->rubric_model->get_vwrubric($rubric_id);
-        $this->table->set_heading('Evaluation Criteria','Performance Levels','','','','');
+        $this->table->set_heading('Evaluation Criteria '. anchor('rubrics/create_evaluation_criteria/'.$rubric_id,'<i class="icon-plus"></i>',' class="btn" title="Add new Evaluation Criteria"'),'Performance Levels','','','','');
         foreach($rubric_ev as $rubric_ev){
             $ev_pls = $this->rubric_model->get_vwpl($rubric_ev->idEvaluation_criteria,$rubric_ev->idRubrics);
             $row = array('<p>'.$rubric_ev->ec_description. '</p> <p>%'. $rubric_ev->percentage.'</p>');
             foreach($ev_pls as $ev_pl){
                 $row[] = '<p>' . $ev_pl->pl_description . '</p> <p>%' . $ev_pl->pl_percentage. '</p>';
             }
-            $row[] = anchor('rubrics/edit_evaluation_criteria/'.$rubric_id.'/'.$rubric_ev->idEvaluation_criteria,'<i class="icon-pencil"></i>');
+            $row[] = anchor('rubrics/edit_evaluation_criteria/'.$rubric_id.'/'.$rubric_ev->idEvaluation_criteria,'<i class="icon-pencil"></i>') .  
+                     anchor('rubrics/delete_evaluation_criteria/'.$rubric_id.'/'.$rubric_ev->idEvaluation_criteria,'<i class="icon-remove"></i>');
             $this->table->add_row($row);
             
         }
@@ -118,6 +119,7 @@ class Rubrics extends CI_Controller {
                 $data['percentage'] += $ev->percentage; 
             }   
         }
+        if($data['percentage'] == 100) redirect('rubrics/details_rubric/'.$data['rubric_id']);
         $data['chosen'] = TRUE;
         $data['evaluation_criteria'] =  $this->evaluation_criteria_model->get_evaluation_criterials($evs);
         $data['performance_levels'] = $this->performance_level_model->get_performance_levels();
@@ -148,6 +150,7 @@ class Rubrics extends CI_Controller {
                 if($ec_id == $ev->idEvaluation_criteria) unset($evs[$key]);
             }   
         }
+        $data['chosen'] = TRUE;
         $data['evaluation_criteria'] =  $this->evaluation_criteria_model->get_evaluation_criterials($evs);
         $data['performance_levels'] = $this->performance_level_model->get_performance_levels();
         $data['content'] = 'rubrics/edit_evaluation_criteria';
@@ -157,25 +160,54 @@ class Rubrics extends CI_Controller {
     
     public function insert_evaluation_criteria()
     {
-        if($this->input->post('submit') == 'next'){
-            $this->rubric_model->insert_ec();
-            echo json_encode(array('stat'=>TRUE));
+        if($this->rubric_model->insert_ec()){
+             $jason = array('stat'=>TRUE);   
+        } else{
+             $jason = array('stat'=> FALSE);
         }
-        
+        if($this->input->post('submit') == 'next'){
+            $rubric_id = $this->input->post('rubric');
+            $evs = $this->rubric_model->get_vwrubric($rubric_id);
+            $percentage = 0;
+            if(is_array($evs))
+            {
+                foreach($evs as $key => $ev){
+                    $percentage += $ev->percentage;
+                }   
+            }
+            $jason['redirect']= ($percentage == 100)? 'submit':'next';
+            echo json_encode($jason);
+        }
         if($this->input->post('submit') == 'submit'){
-            $this->rubric_model->insert_ec();
-            echo json_encode(array('stat'=>FALSE));
+            $jason['redirect']= 'submit';
+            echo json_encode($jason);
         }
     }
     
     public function update_evaluation_criteria()
     {
         $rubric_id = $this->input->post('rubric');
-        $this->rubric_model->delete_ec();
-        $this->rubric_model->insert_ec();
-        redirect('rubrics/details_rubric/'.$rubric_id);
+        $ec_id = $this->input->post('ec_id');
+        $this->rubric_model->delete_ec($rubric_id,$ec_id);
+        if($this->rubric_model->insert_ec()){
+             $jason = array('stat'=>TRUE);   
+        } else{
+             $jason = array('stat'=> FALSE);
+        }
+        $jason['redirect']= 'submit';
+        echo json_encode($jason);
+        //redirect('rubrics/details_rubric/'.$rubric_id);
     }
-    
+    public function delete_evaluation_criteria()
+    {
+      $rubric_id = $this->uri->segment(3);
+      $ec_id = $this->uri->segment(4);
+      
+      $this->alert->add_alert('Evaluation Criteria deleted','success');
+      $this->alert->set_alerts();
+      $this->rubric_model->delete_ec($rubric_id,$ec_id);
+      redirect('rubrics/details_rubric/'.$rubric_id);
+    }
     public function insert_ec()
     {
         $this->load->model('evaluation_criteria_model');

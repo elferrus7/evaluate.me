@@ -110,7 +110,7 @@ class Evaluations extends CI_Controller{
         $this->table->set_heading('Event','Description', 'Start Date','Close Date','');
         foreach($events as $event){
             $even = $this->event_model->get_event($event->Events_idEvents);
-            $this->table->add_row($even->name,$even->description,$even->date,'',anchor('evaluations/projects/'.$even->idEvents,'<i class="icon-search"></i>'));
+            $this->table->add_row($even->name,$even->description,$even->date,$even->close_date,anchor('evaluations/projects/'.$even->idEvents,'<i class="icon-search"></i>'));
         }
         $data['table']= $this->table->generate();
         $data['pagination']='';

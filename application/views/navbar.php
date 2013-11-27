@@ -24,6 +24,9 @@
                     <li>
                         <?php echo anchor('evaluations/events','Evaluations') ?>
                     </li>
+                    <li>
+                        <?php echo anchor('auth/logout','<i class="icon-off"></i>') ?>
+                    </li>
                 </ul>
             </div>
         </div>

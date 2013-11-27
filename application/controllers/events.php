@@ -51,10 +51,10 @@ class Events extends CI_Controller {
         
         $events = $this->event_model->get_events($limit,$offeset);
         
-        $this->table->set_heading('Event Name','Event Description', 'Date','');
+        $this->table->set_heading('Event Name','Event Description', 'Start Date','Close Date','');
         $this->table->set_caption('Events ' . anchor('events/create_event','<i class="icon-plus"></i>', 'class="btn" title="New Event"'));
         foreach($events as $event){
-            $this->table->add_row($event->name, $event->description, $event->date, 
+            $this->table->add_row($event->name, $event->description, $event->date, $event->close_date, 
                                   anchor('events/details_event/'.$event->idEvents,'<i class="icon-zoom-in"></i>').
                                   anchor('events/edit_event/'.$event->idEvents,'<i class="icon-pencil"></i>').
                                   anchor('events/delete_event/'.$event->idEvents,'<i class="icon-remove"></i>'));
@@ -77,7 +77,8 @@ class Events extends CI_Controller {
         $event = $this->event_model->get_event($event_id);
         $this->table->set_heading('Details','');
         $this->table->add_row('Event Name', $event->name .' ' . anchor('events/edit_event/'.$event->idEvents,'<i class="icon-pencil"></i>','title="Edit Event"'));
-        $this->table->add_row('Date', $event->date);
+        $this->table->add_row('Start Date', $event->date);
+        $this->table->add_row('Close Date', $event->close_date);
         $this->table->add_row('Description', $event->description);
         $data['table'] = $this->table->generate();
         
@@ -219,6 +220,38 @@ class Events extends CI_Controller {
         }else{
             echo json_encode(array('stat'=>FALSE));
         }
+    }
+    
+    public function event_report()
+    {
+        $event_id = $this->uri->segment(3);
+        if($event_id === FALSE)redirect('events/display_events');
+        $this->load->model('evaluation_model');
+        $event = $this->event_model->get_event($event_id);
+        $this->load->library('table');
+        $this->config->load('table_html');
+        $tmpl = $this->config->item('tmpl');
+        $this->table->set_template($tmpl);
+        $this->table->set_heading('Project','Grade','');
+        $projects = $this->event_model->get_event_projects($event_id);
+        $p_orders = array();
+        foreach($projects as $project){
+            $grade = $this->evaluation_model->get_sum_grade($project->idProjects)->grade;
+            $p_orders[] = array('grade'=> $grade,'project' =>$project);
+            
+        }
+        rsort($p_orders);
+        foreach($p_orders as $p_order){
+            $grade = $p_order['grade'];
+            $project = $p_order['project'];
+            $this->table->add_row($project->project_name,$grade, anchor('events/details_project/'.$project->idProjects,'<i class="icon-pencil"></i>','title="Project details"'));
+        }
+        $data['projects'] = $this->event_model->count_projects($event_id);
+        $data['students'] = $this->event_model->count_students($event_id);
+        $data['table'] = $this->table->generate();
+        $data['content'] = 'events/report_event';
+        $data['title'] = 'Event';
+        $this->load->view('index.php',$data);
     }
     
 }

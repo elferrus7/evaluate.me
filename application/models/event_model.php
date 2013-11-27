@@ -32,6 +32,7 @@ class Event_model extends CI_Model {
             $data = array(
                 'name' => $this->input->post('name'),
                 'date' => $this->input->post('date'),
+                'close_date' => $this->input->post('close_date'),
                 'description' => $this->input->post('description')
             );
             $this->db->insert($this->table, $data);
@@ -53,6 +54,7 @@ class Event_model extends CI_Model {
             $data = array(
                 'name' => $this->input->post('name'),
                 'date' => $this->input->post('date'),
+                'close_date' => $this->input->post('close_date'),
                 'description' => $this->input->post('description')
             );
             $this->db->where('idEvents',$event_id);
@@ -197,11 +199,29 @@ class Event_model extends CI_Model {
         return $data;
     }
     
+    public function count_projects($event_id)
+    {
+        $this->db->where(array('Events_idEvents'=>$event_id));
+        return $this->db->count_all_results($this->projects);    
+    }
+    
+    public function count_students($event_id)
+    {
+        $projects = $this->db->get_where($this->projects,array('Events_idEvents'=>$event_id))->result();
+        $count = 0;
+        foreach($projects as $project){
+            $this->db->where(array('Projects_idProjects'=>$project->idProjects));
+            $count += $this->db->count_all_results($this->project_students);
+        }
+        return $count;    
+    }
+    
     public function form_validation()
     {
         $this->load->library('form_validation');
         $this->form_validation->set_rules('name', 'Name', 'required');
         $this->form_validation->set_rules('date', 'Date', 'required'); 
+        $this->form_validation->set_rules('close_date', 'Close Date', 'required');
         $this->form_validation->set_rules('description', 'Description', 'required');
         $this->form_validation->set_rules('judges', 'Judges', 'required');
         return $this->form_validation->run();

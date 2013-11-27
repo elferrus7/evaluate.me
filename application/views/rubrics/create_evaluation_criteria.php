@@ -2,6 +2,8 @@
     $(document).ready( function(){
         var base_url = "<?php echo base_url(); ?>";
         //var pl_ids = [];
+        $('#pl_error').hide();
+        $('#p_error').hide();
         $('.pl_dropdown').chosen();
         $('.drpdwnEvaluation').chosen();
         $('#insert_ec').click(function(){
@@ -13,11 +15,10 @@
                 type: "POST",
                 data: {'percentage':percentage,'description':description},
                 success: function(resp){
-                    console.log(jQuery.parseJSON(resp));
-                    var jason = jQuery.parseJSON(resp);
-                    var option = new Option(jason.description,jason.ev_id);
-                    $('select[name="evaluation_criteria"]').append(option);
-                    $('select[name="evaluation_criteria"]').val(jason.ev_id);
+                    //console.log(jQuery.parseJSON(resp));
+                    //var jason = jQuery.parseJSON(resp);
+                    location.assign('<?php echo base_url().'index.php/rubrics/create_evaluation_criteria/'.$rubric_id; ?>');
+                    //$('select[name="evaluation_criteria"]').val(jason.ev_id);
                     
                 }
             });
@@ -32,19 +33,20 @@
                 type: "POST",
                 data: {'percentage':percentage,'description':description},
                 success: function(resp){
-                    var jason = jQuery.parseJSON(resp);
+                    /*var jason = jQuery.parseJSON(resp);
                     var option = new Option(jason.description,jason.pl_id);
                     $('.pl_dropdown').append(option);
-                    //$('.pl_dropdown').val(jason.pl_id);
+                    //$('.pl_dropdown').val(jason.pl_id);*/
+                   location.assign('<?php echo base_url().'index.php/rubrics/create_evaluation_criteria/'.$rubric_id; ?>');
                     
                 }
             });
         });
         
-        $('#pl_1_chosen').click(function(){
+        /*$('#pl_1_chosen').click(function(){
             var pl_id = $('#pl_1_chosen a.chosen-single');
             console.log(pl_id);
-            /*$.ajax({
+            $.ajax({
                 url: base_url + "index.php/rubrics/get_pl",
                 async: false,
                 type: "POST",
@@ -57,29 +59,40 @@
                         //$('#pl_2').show('slow');
                     });
                 }
-            });*/
-        });
+           });
+        });*/
         
         function get_ec(btn){
             var pls = [];
+            var error = false
             $('table td div a.chosen-single').each(function(){
+                if($.inArray($(this).data('id'),pls) != -1){
+                    $('#pl_error').show('slow');
+                    error = true;
+                }
                 pls.push($(this).data('id'));
             });
             var ec = $('#ec_chosen').find('.chosen-single').data('id');
             var rubric = <?php echo $rubric_id; ?>;
+            if(error){return;} 
             $.ajax({
                 url: base_url + "index.php/rubrics/insert_evaluation_criteria",
                 async: false,
                 type: "POST",
                 data: {'evaluation_criteria':ec,'rubric':rubric, 'pls':pls,'submit':btn},
                 success: function(resp){
-                    //console.log(jQuery.parseJSON(resp));
+                    console.log(resp);
                     var jason = jQuery.parseJSON(resp);
                     if(jason.stat){
-                        location.assign('<?php echo base_url().'index.php/rubrics/create_evaluation_criteria/'.$rubric_id; ?>');
+                        if(jason.redirect == 'next'){
+                            location.assign('<?php echo base_url().'index.php/rubrics/create_evaluation_criteria/'.$rubric_id; ?>');
+                        } else {
+                            location.assign('<?php echo base_url().'index.php/rubrics/details_rubric/'.$rubric_id; ?>');
+                        }    
                     } else {
-                        location.assign('<?php echo base_url().'index.php/rubrics/details_rubric/'.$rubric_id; ?>');
+                        $('#p_error').show('slow');
                     }
+                    
                 }
             });
         }
@@ -93,6 +106,8 @@
     });
 </script>
 <div class="span9 offset1">
+    <div class="alert alert-error" id="pl_error">You cannot use the same performance level twice</div>
+    <div class="alert alert-error" id="p_error">The Rubric cannot be more of 100%</div>
     <?php echo $this->alert->display_alerts(); ?>
     <h3><?php echo $rubric->name; ?></h3>
     <h4><?php echo '%'.$percentage; ?></h4>
@@ -120,7 +135,7 @@
         </table>
         <!--<input class="btn btn-primary" type="submit" style="margin-left: 260px;" value="Next" name="submit" />-->
         <a class="btn btn-primary" id="next">Next</a>
-        <a class="btn btn" id="submit" style="margin-left: 260px;">Next</a>
+        <a class="btn btn" id="submit" style="margin-left: 260px;">Submit</a>
         <!--<input class="btn" type="submit" style="margin-left: 260px;" value="Submit" name="submit" />-->
     </form>
     <div id="InsertEvaluation" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">

@@ -91,6 +91,18 @@ class Rubric_model extends CI_Model{
         //if($this->validate_ec())
         //{
             $this->db->trans_start();
+            $ecs = $this->get_vwrubric($this->input->post('rubric'));
+            $percentage = 0;
+            if(is_array($ecs))
+            {
+                foreach($ecs as $key => $ev){
+                    $percentage += $ev->percentage;
+                }   
+            }
+            $ec = $this->get_ec($this->input->post('evaluation_criteria'));
+            if(($percentage + $ec->percentage) > 100){
+                return FALSE;
+            } 
             $data = array(
                 'Evaluation_criteria_idEvaluation_criteria' => $this->input->post('evaluation_criteria'),
                 'Rubrics_idRubrics' => $this->input->post('rubric')
@@ -106,16 +118,15 @@ class Rubric_model extends CI_Model{
                 );
                 $this->db->insert($this->ec_pl,$data);    
             }
-            $this->db->trans_complete();    
+            $this->db->trans_complete();
+            return TRUE;    
         //}
           
     }
     
-    public function delete_ec()
+    public function delete_ec($rubric_id, $ec_id)
     {
             //$this->db->trans_start();
-            $ec_id = $this->input->post('ec_id');
-            $rubric_id = $this->input->post('rubric');
             
             $this->db->where('Rubrics_idRubrics',$rubric_id);
             $this->db->where('Evaluation_criteria_idEvaluation_criteria',$ec_id);
@@ -137,6 +148,10 @@ class Rubric_model extends CI_Model{
         }
         
         return $this->form_validation->run();
+    }
+    
+    public function get_ec($ec_id){
+        return $this->db->get_where($this->evaluation_criteria,array('idEvaluation_criteria'=>$ec_id))->row();
     }
     
     public function form_validation()

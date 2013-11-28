@@ -5,6 +5,8 @@ class Evaluations extends CI_Controller{
     {
         parent::__construct();
         $this->load->model('evaluation_model');
+        $this->load->library('auth_lib');
+        $this->auth_lib->validate_auth();
         $this->load->library('Alert');
     }
     
@@ -22,13 +24,22 @@ class Evaluations extends CI_Controller{
         $rubric = $this->evaluation_model->get_rubric($event->idEvents);
         $ec = $this->evaluation_model->get_evaluation_criteria_rubric($rubric->idRubrics,$project_id);
         if(!$ec){redirect('evaluations/details_evaluation/'.$project_id);}
-        $pls = $this->evaluation_model->get_performance_levels($ec->idEvaluation_criteria);
+        $pls = $this->evaluation_model->get_performance_levels($ec->idEvaluation_criteria,$rubric->idRubrics);
         $data['rubric'] = $rubric;
         $data['user'] = $this->session->userdata('idUsers');
         $data['project'] = $project;
         $data['event'] = $event;
         $data['ec'] = $ec;
-        $data['pls'] = $pls;
+        $pl_sort = array();
+        foreach($pls as $pl){
+            $pl_sort[] = array('percentage'=> $pl->percentage,'pl'=>$pl);
+        }
+        rsort($pl_sort);
+        $evaluations = $this->evaluation_model->get_vwevaluations($project_id);
+        if(count($evaluations) >= 1){
+            $data['e_id'] = end($evaluations)->idEvaluations;
+        }
+        $data['pls'] = $pl_sort;
         $data['title'] = 'Evaluation';
         $data['content'] = 'evaluations/evaluate';
         $this->load->view('index.php',$data);
@@ -77,14 +88,23 @@ class Evaluations extends CI_Controller{
         $event = $this->evaluation_model->get_event($evaluation->Projects_idProjects);
         $rubric = $this->evaluation_model->get_rubric($event->idEvents);
         $ec = $this->evaluation_model->get_evaluation_criteria($evaluation->Evaluation_criteria_idEvaluation_criteria);
-        $pls = $this->evaluation_model->get_performance_levels($ec->idEvaluation_criteria);
+        $pls = $this->evaluation_model->get_performance_levels($ec->idEvaluation_criteria,$rubric->idRubrics);
         $data['evaluation'] = $evaluation;
         $data['rubric'] = $rubric;
-        $data['user'] = 1;
+        $data['user'] = $this->session->userdata('idUsers');
         $data['project'] = $project;
         $data['event'] = $event;
         $data['ec'] = $ec;
-        $data['pls'] = $pls;
+        $pl_sort = array();
+        foreach($pls as $pl){
+            $pl_sort[] = array('percentage'=> $pl->percentage,'pl'=>$pl);
+        }
+        rsort($pl_sort);
+        $evaluations = $this->evaluation_model->get_vwevaluations($evaluation->Projects_idProjects);
+        if(count($evaluations) >= 1){
+            $data['e_id'] = end($evaluations)->idEvaluations;
+        }
+        $data['pls'] = $pl_sort;
         $data['title'] = 'Evaluation';
         $data['content'] = 'evaluations/edit_evaluation';
         $this->load->view('index.php',$data);
@@ -93,8 +113,9 @@ class Evaluations extends CI_Controller{
     public function update_evaluation()
     {
         $evaluation_id = $this->input->post('evaluation_id'); 
+        $project_id = $this->input->post('project_id');
         if($this->evaluation_model->update_evaluation()){
-            redirect('evaluations/details_evaluation/'.$evaluation_id);
+            redirect('evaluations/details_evaluation/'.$project_id);
         }
         redirect('evaluations/edit_evaluation/'.$evaluation_id);
     }

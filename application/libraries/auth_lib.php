@@ -11,12 +11,16 @@
      {
      }
      
-     public function have_auth(){
+     public function validate_auth(){
          $CI =& get_instance();
-         $operation = $CI->uri->segment(2);
+         $CI->load->library('Alert');
+         $operation = ($CI->uri->segment(2))? $CI->uri->segment(2):'index';
          $auth = $CI->session->userdata('auth');
-         if(array_key_exists($operation, $auth)) return TRUE;
-         return FALSE;
+         if(!array_key_exists($operation, $auth)){
+             $CI->alert->add_alert('You have no permissions','error');
+             $CI->alert->set_alerts();
+             redirect('events');
+         };
      }
      
      public function have_role($role_name)

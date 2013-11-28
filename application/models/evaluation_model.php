@@ -13,6 +13,7 @@ class Evaluation_model extends CI_Model{
     private $rubric_evs = 'rubrics_has_evaluation_criteria';
     private $ec_pls = 'evaluation_criteria_has_performance_levels';
     private $events_users = 'events_has_users';
+    private $vwevent = 'vwevents';
     function __construct()
     {
         parent::__construct();
@@ -48,9 +49,9 @@ class Evaluation_model extends CI_Model{
         return $this->db->get($this->evaluation_criteria,array('idEvaluation_criteria'=>$ec_id))->row();
     }
     
-    public function get_performance_levels($ec_id)
+    public function get_performance_levels($ec_id,$rubric_id)
     {
-        $ec_pls = $this->db->get_where($this->ec_pls,array('Evaluation_criteria_idEvaluation_criteria'=> $ec_id))->result();
+        $ec_pls = $this->db->get_where($this->ec_pls,array('Evaluation_criteria_idEvaluation_criteria'=> $ec_id,'Rubrics_idRubrics'=>$rubric_id))->result();
         $data = array();
         foreach($ec_pls as $ec_pl){
             //echo print_r($ec_pl);
@@ -111,6 +112,9 @@ class Evaluation_model extends CI_Model{
     }
     
     public function get_events_user($user_id){
-        return $this->db->get_where($this->events_users,array('Users_idUsers'=>$user_id))->result();
+        $today = date('Y-m-d');
+        $r = $this->db->get_where($this->vwevent,array('Users_idUsers'=>$user_id,'close_date >=' =>$today ))->result();
+        //echo $this->db->last_query();
+        return $r;
     }
 }

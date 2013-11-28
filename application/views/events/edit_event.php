@@ -20,12 +20,17 @@
                 $('#time').show('slow');
                 return;
             }
+            console.log('name '+ name);
+            console.log('date '+ date);
+            console.log('close_date ' +close_date);
+            console.log('event_id '+ event_id);
+            console.log('description ' + description);
             console.log(judges);
             $.ajax({
                 url: base_url + "index.php/events/update_event",
                 async: false,
                 type: "POST",
-                data: {'name':name,'date':date,'description':description,'judges': judges,'event_id':event_id},
+                data: {'name':name,'date':date,'close_date':close_date,'description':description,'judges': judges,'event_id':event_id},
                 success: function(resp){
                     var jason = jQuery.parseJSON(resp);
                     if(jason.stat){

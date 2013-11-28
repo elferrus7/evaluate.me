@@ -1,6 +1,7 @@
 <script type="text/javascript">
     $(document).ready(function(){
        $('#success').hide();
+       $('#project_error').hide();
        var base_url = "<?php echo base_url(); ?>";
        var event_id = <?php echo $event_id; ?>;
        $('#select_students').chosen({
@@ -28,9 +29,11 @@
                     console.log(resp);
                     var jason = jQuery.parseJSON(resp);
                     if(jason.stat){
-                        //window.location = base_url + 'index.php/events/details_event/' + jason.event_id;
-                        $('#projects tr:last').after('<tr><td>' + team_name + '</td>'+project_name+'<td>'+ description + '</td></tr>');
-                        $('#success').show('slow');
+                        location.assign(base_url + 'index.php/events/details_event/' + event_id);
+                        //$('#projects tr:last').after('<tr><td>' + team_name + '</td>'+project_name+'<td>'+ description + '<a href="'+base_url+'/index.php/events/details_project/'+ jason.project_id +'"><i class="icon-zoom-in"></i></a> </td></tr>');
+                        //$('#success').show('slow');
+                    } else {
+                        $('#project_error').show('slow');
                     }
                 }
             });
@@ -49,9 +52,25 @@
                     console.log(resp);
                     var jason = jQuery.parseJSON(resp);
                     if(jason.stat){
-                        console.log('simon');
-                        //window.location = base_url + 'index.php/events/details_event/' + jason.event_id;
-                        $('#success').show('slow');
+                        //console.log('simon');
+                        location.assign(base_url + 'index.php/events/details_event/' + event_id);
+                        //$('#success').show('slow');
+                    }
+                }
+            });
+        });
+        
+        $('#edit_rubric').click(function (){
+           var rubric_id = $('select[name="rubric_edit"]').val();
+           $.ajax({
+                url: base_url + "index.php/events/edit_select_rubric",
+                async: false,
+                type: "POST",
+                data:{'rubric_id': rubric_id,'event_id':event_id},
+                success: function(resp){
+                    var jason = jQuery.parseJSON(resp);
+                    if(jason.stat){
+                        location.assign(base_url + 'index.php/events/details_event/' + event_id);    
                     }
                 }
             });
@@ -61,11 +80,12 @@
 </script>
 <div class="span10 offset1">
     <div class="alert alert-success" id="success">Rubric Selected</div>
+    <div class="alert alert-error" id="project_error">Please fill all the fields of the project</div>
     <!-- Content span -->
     <?php if(!$event_rubric): ?>
     <p>Assign Rubric <a class="btn" href="#SelectRubric" role="button" data-toggle="modal" title="Assign Rubric">Select Rubric</a></p>
     <?php else: ?>
-     <p>Rubric: <?php echo $event_rubric->name.' ' . anchor('rubrics/details_rubric/'.$event_rubric->idRubrics,'<i class="icon icon-zoom-in"></i>','title="Details Rubric"'); ?></p>
+     <p>Rubric: <?php echo $event_rubric->name.' ' . anchor('rubrics/details_rubric/'.$event_rubric->idRubrics,'<i class="icon icon-zoom-in"></i>','title="Details Rubric"'); ?><a href="#EditRubric" role="button" data-toggle="modal" title="Edit Rubric"><i class="icon-pencil"></i></a></p>
     <?php endif; ?>
     <?php echo $table; ?>
     <?php echo $table_judges; ?>
@@ -117,5 +137,25 @@
                 Close
             </button>
             <a class="btn btn-primary" id="select_rubric" data-dismiss="modal">Submit</a>
+        </div>
+    </div>
+    
+<div id="EditRubric" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                ×
+            </button>
+            <h3 id="myModalLabel">Edit Rubric</h3>
+        </div>
+        <div class="modal-body">
+            <form>  
+                <?php echo form_dropdown('rubric_edit',$rubrics,''); ?>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">
+                Close
+            </button>
+            <a class="btn btn-primary" id="edit_rubric" data-dismiss="modal">Submit</a>
         </div>
     </div>

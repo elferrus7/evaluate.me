@@ -67,6 +67,7 @@ class Event_model extends CI_Model {
             }
             return TRUE;   
         }
+        return FALSE;
     }
     
     public function delete_event($event_id)
@@ -179,6 +180,10 @@ class Event_model extends CI_Model {
         );
         $this->db->insert($this->event_rubrics,$data);
         return TRUE;
+    }
+    
+    public function delete_select_rubric($event_id){
+        $this->db->delete($this->event_rubrics,array('Events_idEvents'=>$event_id));
     }
     
     public function count_events()

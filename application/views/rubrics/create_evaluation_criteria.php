@@ -68,6 +68,7 @@
             $('table td div a.chosen-single').each(function(){
                 if($.inArray($(this).data('id'),pls) != -1){
                     $('#pl_error').show('slow');
+                    window.setInterval(function(){location.assign('<?php echo base_url().'index.php/rubrics/create_evaluation_criteria/'.$rubric_id; ?>');},3000);
                     error = true;
                 }
                 pls.push($(this).data('id'));
@@ -91,6 +92,7 @@
                         }    
                     } else {
                         $('#p_error').show('slow');
+                        window.setInterval(function(){location.assign('<?php echo base_url().'index.php/rubrics/create_evaluation_criteria/'.$rubric_id; ?>');},3000);
                     }
                     
                 }

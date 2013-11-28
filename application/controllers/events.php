@@ -22,8 +22,8 @@ class Events extends CI_Controller {
     {
         parent::__construct();
         $this->load->model('event_model');
-        //$this->load->library('auth_lib');
-        //if(!$this->auth_lib->have_auth()) redirect('auth');
+        $this->load->library('auth_lib');
+        $this->auth_lib->validate_auth();
         $this->load->library('Alert');
     }
      
@@ -57,7 +57,8 @@ class Events extends CI_Controller {
             $this->table->add_row($event->name, $event->description, $event->date, $event->close_date, 
                                   anchor('events/details_event/'.$event->idEvents,'<i class="icon-zoom-in"></i>').
                                   anchor('events/edit_event/'.$event->idEvents,'<i class="icon-pencil"></i>').
-                                  anchor('events/delete_event/'.$event->idEvents,'<i class="icon-remove"></i>'));
+                                  anchor('events/delete_event/'.$event->idEvents,'<i class="icon-remove"></i>').
+                                  anchor('events/event_report/'.$event->idEvents,'<i class="icon-list-alt"></i>','title="Event Report"'));
         }
         $data['table'] = $this->table->generate();
         $data['content'] = 'events/display_events';
@@ -99,7 +100,7 @@ class Events extends CI_Controller {
         $projects = $this->event_model->get_event_projects($event_id);
         
         foreach($projects as $project){
-            $this->table->add_row($project->team_name,$project->project_name,$project->description . ' ' . anchor('events/details_project/'.$project->idProjects,'<i class="icon-pencil"></i>','title="Project details"'));
+            $this->table->add_row($project->team_name,$project->project_name,$project->description . ' ' . anchor('events/details_project/'.$project->idProjects,'<i class="icon-zoom-in"></i>','title="Project details"'));
         }
         $data['rubrics'] = $this->event_model->get_rubrics();
         $data['event_rubric'] = $this->event_model->get_event_rubrics($event_id);
@@ -215,6 +216,16 @@ class Events extends CI_Controller {
     
     public function select_rubric()
     {
+        if($this->event_model->select_rubric()){
+            echo json_encode(array('stat'=>TRUE));
+        }else{
+            echo json_encode(array('stat'=>FALSE));
+        }
+    }
+    
+    public function edit_select_rubric(){
+        $event_id = $this->input->post('event_id');
+        $this->event_model->delete_select_rubric($event_id);
         if($this->event_model->select_rubric()){
             echo json_encode(array('stat'=>TRUE));
         }else{

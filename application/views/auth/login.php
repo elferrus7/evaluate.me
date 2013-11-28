@@ -33,6 +33,8 @@
         <div class="row-fluid">
             <div class="span8 offset4" id="login">
                 <h1>Evaluate.me</h1>
+                <div style="width: 220px;"><?php echo $this->alert->display_alerts(); ?></div>
+                
                 <?php echo form_open('auth/login'); ?>
                    <input type="text" name="username" placeholder="Username" /> <br />
                    <input type="password" name="password" placeholder="Password" /> <br />

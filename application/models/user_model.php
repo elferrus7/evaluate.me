@@ -116,6 +116,10 @@ class User_model extends CI_Model
     
     public function login()
     {
+        $this->load->library('form_validation');
+        $this->form_validation->set_rules('username','Username','required');
+        $this->form_validation->set_rules('password','Password','required');
+        if(!$this->form_validation->run()) return FALSE;
         $this->load->library('encrypt');
         $username = $this->input->post('username');
         $password = $this->input->post('password');

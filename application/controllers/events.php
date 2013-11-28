@@ -144,7 +144,7 @@ class Events extends CI_Controller {
         $data['content'] = 'events/create_event';
         $data['sorteable'] = TRUE;
         $data['title'] = 'Create Event';
-        $judges = $this->user_model->get_users();
+        $judges = $this->event_model->get_all_judges();
         $data['judges'] = "";
         foreach ($judges as $judge){
             $data['judges'] .= "<li data-id=\"$judge->idUsers\" class=\"judge\">$judge->first_name $judge->last_name </li>";

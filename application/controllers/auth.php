@@ -23,7 +23,7 @@ class Auth extends CI_Controller {
         $this->load->library('auth_lib');
         echo print_r($this->input->post());
         if($this->user_model->login()){
-            if($this->auth_lib->have_role('Judge')) redirect('rubrics/display_rubrics');
+            if($this->auth_lib->have_role('Judge')) redirect('evaluations/events');
             redirect('events/display_events');
         }
         $this->alert->add_alert('Invalid Username/Password','error');

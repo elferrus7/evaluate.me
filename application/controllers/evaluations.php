@@ -145,13 +145,21 @@ class Evaluations extends CI_Controller{
       $this->load->model('event_model');
       $projects = $this->event_model->get_event_projects($event_id);
       $this->load->library('table');
-        $this->config->load('table_html');
-        $tmpl = $this->config->item('tmpl');
-        $this->table->set_template($tmpl);
-        $this->table->set_heading('Project','Description', 'Team','Evaluated','');
+      $this->config->load('table_html');
+      $tmpl = $this->config->item('tmpl');
+      $this->table->set_template($tmpl);
+      $this->table->set_heading('Project','Description', 'Team','Evaluated','');
+      $event = $this->event_model->get_event($event_id);
+      $rubric = $this->evaluation_model->get_rubric($event->idEvents);
       foreach($projects as $project){
+          $ec = $this->evaluation_model->get_evaluation_criteria_rubric($rubric->idRubrics,$project->idProjects);
+          if($ec){
+              $evaluated ='<i class="icon-remove"></i>';
+          } else {
+              $evaluated ='<i class="icon-ok"></i>';
+          }
           $pr = $this->evaluation_model->get_project($project->idProjects);
-          $this->table->add_row($pr->project_name,$pr->description,$pr->team_name,'<i class="icon-remove"></i>',anchor('evaluations/evaluate/'.$pr->idProjects,'<i class="icon-search"></i>'));
+          $this->table->add_row($pr->project_name,$pr->description,$pr->team_name,$evaluated,anchor('evaluations/evaluate/'.$pr->idProjects,'<i class="icon-search"></i>'));
       }
       $data['table']= $this->table->generate();
       $data['pagination']='';

@@ -10,6 +10,7 @@ class Event_model extends CI_Model {
     private $project_students = 'projects_has_students';
     private $rubrics = 'rubrics';
     private $event_rubrics = 'events_has_rubrics';
+    private $users = 'vwusers';
     function __construct()
     {
         parent::__construct();
@@ -102,12 +103,14 @@ class Event_model extends CI_Model {
             if($event_id){
                $event_judges = $this->db->get_where($this->event_view, array('idEvents' => $event_id))->result();
                 foreach($event_judges as $event_judge){
-                    $this->db->where('idUsers !=', $event_judge->Users_idUsers);
+                    $this->db->where(array('idUsers !='=> $event_judge->Users_idUsers ,'name'=>'Judge'));
                 }
-                return $this->db->get('Users')->result(); 
+                $r = $this->db->get($this->users)->result();
+                //echo $this->db->last_query();
+                return $r; 
             }
             
-        return $this->db->get('Users')->result();
+        return $this->db->get($this->users)->result();
     }
     
     public function get_students()
@@ -219,6 +222,10 @@ class Event_model extends CI_Model {
             $count += $this->db->count_all_results($this->project_students);
         }
         return $count;    
+    }
+    
+    public function get_all_judges(){
+        return $this->db->get_where($this->users,array('name'=>'Judge'))->result();
     }
     
     public function form_validation()
